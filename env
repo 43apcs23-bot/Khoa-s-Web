@@ -1,8 +1,10 @@
 REACT_APP_BASE_URL = 'http://localhost:3000'
-REACT_APP_APIKEY = "AIzaSyC7ZqTeUXkAw_aFX6CPa43fupZbu8_4wos"
-REACT_APP_AUTHDOMAIN = "shoesstore-4be78.firebaseapp.com"
-REACT_APP_PROJECTID = "shoesstore-4be78"
-REACT_APP_STORAGEBUCKET = "shoesstore-4be78.firebasestorage.app"
-REACT_APP_MESSAGINGSENDERID = "731559009558"
-REACT_APP_APPID = "G-NF47EC4WT2"
+REACT_APP_APIKEY = add your firebase api key here
+REACT_APP_AUTHDOMAIN = add your firebase auth domain here
+REACT_APP_PROJECTID = add your firebase project id here
+REACT_APP_STORAGEBUCKET = add your firebase storage bucket here
+REACT_APP_MESSAGINGSENDERID = add your firebase messaging sender id here
+REACT_APP_APPID = add your firebase app id here
 
+// Watch this video to create Firebase Storage Bucket: 
+https://www.youtube.com/watch?v=0E1MM3tBqRo&list=PLJ3uCOeGaRaKKNzSJKb1RD5-mO9mQ1qKD&index=2

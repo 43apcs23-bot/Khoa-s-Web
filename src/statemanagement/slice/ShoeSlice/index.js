@@ -17,11 +17,11 @@ export const getAllShoe = createAsyncThunk('Shoe/getAllShoe', async ({ page, lim
         return { data, runnning, lounging, everyday };
     } catch (error) {
         if (error?.response?.status >= 400 && error?.response?.status <= 500) {
-            NotifyWarning(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang")
-            return rejectWithValue(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang");
+            NotifyWarning(error?.response?.data?.message || "Error please  reload page")
+            return rejectWithValue(error?.response?.data?.message || "Error please  reload page");
         } else {
-            NotifyError(error?.message || 'Đã có lỗi xảy ra')
-            return rejectWithValue(error?.message || 'Đã có lỗi xảy ra')
+            NotifyError(error.message)
+            return rejectWithValue(error.message)
         }
     }
 }
@@ -33,11 +33,11 @@ export const getTopShoe = createAsyncThunk('Shoe/getTopShoe', async (rejectWithV
         return data;
     } catch (error) {
         if (error?.response?.status >= 400 && error?.response?.status <= 500) {
-            NotifyWarning(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang")
-            return rejectWithValue(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang");
+            NotifyWarning(error?.response?.data?.message || "Error please  reload page")
+            return rejectWithValue(error?.response?.data?.message || "Error please  reload page");
         } else {
-            NotifyError(error?.message || 'Đã có lỗi xảy ra')
-            return rejectWithValue(error?.message || 'Đã có lỗi xảy ra')
+            NotifyError(error.message)
+            return rejectWithValue(error.message)
         }
     }
 }
@@ -53,11 +53,11 @@ export const getShoeByIdOnPageLoad = createAsyncThunk('Shoe/getShoeByIdOnPageLoa
         return data;
     } catch (error) {
         if (error?.response?.status >= 400 && error?.response?.status <= 500) {
-            NotifyWarning(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang")
-            return rejectWithValue(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang");
+            NotifyWarning(error?.response?.data?.message || "Error please  reload page")
+            return rejectWithValue(error?.response?.data?.message || "Error please  reload page");
         } else {
-            NotifyError(error?.message || 'Đã có lỗi xảy ra')
-            return rejectWithValue(error?.message || 'Đã có lỗi xảy ra')
+            NotifyError(error.message)
+            return rejectWithValue(error.message)
         }
     }
 }
@@ -72,11 +72,11 @@ export const createShoe = createAsyncThunk('Shoe/createShoe', async ({ closeModa
         return;
     } catch (error) {
         if (error?.response?.status >= 400 && error?.response?.status <= 500) {
-            NotifyWarning(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang")
-            return rejectWithValue(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang");
+            NotifyWarning(error?.response?.data?.message || "Error please  reload page")
+            return rejectWithValue(error?.response?.data?.message || "Error please  reload page");
         } else {
-            NotifyError(error?.message || 'Đã có lỗi xảy ra')
-            return rejectWithValue(error?.message || 'Đã có lỗi xảy ra')
+            NotifyError(error.message)
+            return rejectWithValue(error.message)
         }
     }
 }

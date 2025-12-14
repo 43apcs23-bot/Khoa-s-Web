@@ -5,26 +5,12 @@ import cors from "cors";
 import dotenv from "dotenv";
 import userRoutes from "./routes/users.js";
 import shoesPageRoutes from "./routes/productRoute.js";
-import orderRoutes from "./routes/order.js";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 const app = express();
 app.use(cookieParser());
 
 dotenv.config();
-// Validate required environment variables early to give clear error messages
-const requiredEnv = [
-  'CONNECTION_URL',
-  'JWT_SECRET',
-  'JWT_EXPIRES_IN',
-  'JWT_COOKIE_EXPIRES_IN'
-];
-const missing = requiredEnv.filter((k) => !process.env[k]);
-if (missing.length) {
-  console.error(`Missing required environment variables: ${missing.join(', ')}`);
-  console.error('Please add them to server/.env or your environment before starting the server.');
-  process.exit(1);
-}
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors(
@@ -37,7 +23,6 @@ app.use(cors(
 app.use(morgan("dev"));
 app.use("/user", userRoutes);
 app.use("/shoesPage", shoesPageRoutes);
-app.use("/orders", orderRoutes);
 app.get("/", (req, res) => {
   res.send("Hello this is Shoes Store");
 });

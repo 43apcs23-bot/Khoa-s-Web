@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import { Navigation } from "swiper";
+import { Pagination, Navigation } from "swiper";
 import { Link } from 'react-router-dom';
 const Carousel = () => {
     const dispatch = useDispatch();
@@ -22,8 +22,8 @@ const Carousel = () => {
                 <div className='absolute w-[40px] h-[1px] bg-[#f53737] top-[-16px] left-1/2 transform -translate-x-1/2 ml-[-10px]'></div>
                 <div
                     className='text-center text-[1.75rem] font-bold text-black mb-2'
-                >Bán chạy</div>
-                <div className='text-center text-gray-700 mb-7 mx-auto text-md font-light italic'>Sản phẩm nổi bật trong tuần</div>
+                >Top Sales</div>
+                <div className='text-center text-gray-700 mb-7 mx-auto text-md font-light max-w-2xl italic'>Add our products to weekly lineup</div>
                 <div className='absolute w-[40px] h-[1px] bg-[#f53737] top-[-24px] left-1/2 transform -translate-x-1/2 z-[1000]'></div>
             </div>
             <Swiper
@@ -72,7 +72,7 @@ const Carousel = () => {
                                             {item?.title.split(" ").slice(0, 6).join(" ")}
                                         </div>
                                         <div className='text-black'>
-                                            VND {item?.price}
+                                            Rs. {item?.price}
                                         </div>
                                     </div>
                                 </div >

@@ -19,7 +19,7 @@ const ProductDropdown = ({ Category, setCategory }) => {
           <div className='text-[15px] font-medium leading-tight'>
             {Category}
           </div>
-          <div className='text-[13px]'>Chọn danh mục</div>
+          <div className='text-[13px]'>Choose category</div>
         </div>
         {isOpen ? (
           <RiArrowUpSLine className='dropdown-icon-secondary' />

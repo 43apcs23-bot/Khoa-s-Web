@@ -18,8 +18,8 @@ const UserVerification = () => {
         // user verification page
         <div className="flex flex-col items-center justify-center h-[30vw]">
             <div className="flex flex-col items-center justify-center">
-                <h1 className="text-2xl font-bold text-gray-800">Xác thực tài khoản</h1>
-                <p className="text-sm text-gray-500">Nhấn nút để xác thực tài khoản của bạn</p>
+                <h1 className="text-2xl font-bold text-gray-800">User Verification</h1>
+                <p className="text-sm text-gray-500">Click on the button to verify your account</p>
             </div>
             <div className="flex flex-col items-center justify-center">
                 <button className="
@@ -36,7 +36,7 @@ const UserVerification = () => {
                     focus:ring-opacity-50
                     transition
                     duration-300
-                " onClick={verify}>Xác thực</button>
+                " onClick={verify}>Verify</button>
                 <p className="mt-2 text-sm text-gray-500">{
                     message.includes('//') ?
                         message.split('//')[1]

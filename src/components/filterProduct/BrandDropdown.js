@@ -17,7 +17,7 @@ const BrandDropdown = ({ brand, setbrand }) => {
         <GiRunningShoe className='dropdown-icon-primary' />
         <div>
           <div className='text-[15px] font-medium leading-tight'>{brand}</div>
-          <div className='text-[13px]'>Chọn thương hiệu của bạn</div>
+          <div className='text-[13px]'>Select your brand</div>
         </div>
         {isOpen ? (
           <RiArrowUpSLine className='dropdown-icon-secondary' />

@@ -43,14 +43,14 @@ const ProductDetails = () => {
             ).splice(0, 1)}
           </div>
           <div className='bg-rose-500 rounded-full text-white px-3 py-2 ml-1 inline-block'>
-            Còn lại: {singleShoeData?.quantity}
+            Available: {singleShoeData?.quantity}
           </div>
           <div className='text-2xl font-semibold text-rose-600 ml-10'>
-            VND {singleShoeData?.price}
+            Rs.{singleShoeData?.price}
           </div>
         </div>
         <div className='text-2xl font-semibold text-rose-600 inline-block sm:hidden'>
-          VND {singleShoeData?.price}
+          Rs.{singleShoeData?.price}
         </div>
       </div>
       <div className='text-sm font-normal flex sm:hidden items-center mt-1'>
@@ -82,7 +82,7 @@ const ProductDetails = () => {
                 {singleShoeData?.title}
               </div>
               <Link to='' className='text-rose-700 text-sm'>
-                Đặt hàng ngay
+                Order Now
               </Link>
             </div>
           </div>
@@ -91,7 +91,7 @@ const ProductDetails = () => {
               className='border border-gray-300 focus:border-rose-700 rounded w-full px-4 h-14 text-sm outline-none'
               type='text'
               defaultValue={decodeData?.name || ''}
-              placeholder='Tên*'
+              placeholder='Name*'
             />
             <input
               className='border border-gray-300 focus:border-rose-700 rounded w-full px-4 h-14 text-sm outline-none'
@@ -102,14 +102,14 @@ const ProductDetails = () => {
             <input
               className='border border-gray-300 focus:border-rose-700 rounded w-full px-4 h-14 text-sm outline-none'
               type='text'
-              placeholder='Số điện thoại*'
+              placeholder='Phone*'
               defaultValue={decodeData?.number || ''}
             />
             <textarea
               className='border border-gray-300 focus:border-rose-700 rounded w-full p-4 h-[5.5rem] text-sm text-gray-400 outline-none resize-none'
               type='text'
-              placeholder='Tin nhắn*'
-              defaultValue='Xin chào, tôi quan tâm tới sản phẩm này. Vui lòng liên hệ với tôi.'
+              placeholder='Message*'
+              defaultValue='Hello, I am interested to buy this product. Please contact me.'
             />
           </form>
           <div className='flex gap-x-2 mt-4'>
@@ -117,12 +117,12 @@ const ProductDetails = () => {
               className='bg-rose-700 hover:bg-rose-800 text-white rounded p-4 text-sm w-full transition'
               onClick={() => CheckoutBtn(singleShoeData)}
             >
-              Đặt hàng ngay
+              Order Now
             </button>
             <button className='border border-rose-700 text-rose-700 hover:border-rose-900 hover:text-rose-900 rounded p-4 text-sm w-full transition' onClick={() => addToCart(
               { product: singleShoeData, shoeId: id }
             )}>
-              Thêm vào giỏ hàng
+              Add to Cart
             </button>
           </div>
         </div>

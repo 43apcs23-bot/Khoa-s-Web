@@ -16,7 +16,7 @@ const PageNotFound = () => {
             backgroundPosition: 'center',
             margin: 'auto',
         }} >
-            <div style={window.innerWidth > 450 ? {
+            <div style={Window.innerWidth > 450 ? {
                 color: 'rgb(0,67,77)',
                 fontSize: '30px',
                 fontWeight: 'bold',
@@ -32,9 +32,7 @@ const PageNotFound = () => {
                 display: "block",
                 marginTop: '370px',
                 zIndex: '1',
-            } }>
-                Trang không tìm thấy
-            </div>
+            }}>Available in the next video</div>
         </div>
     );
 }

@@ -10,7 +10,7 @@ const PriceRangeDropdown = ({ price, setPrice }) => {
   const [isOpen, setIsOpen] = useState(false);
   const prices = [
     {
-      value: 'Tất cả giá',
+      value: 'All Prices',
     },
     {
       value: '1000 - 5000',
@@ -35,7 +35,7 @@ const PriceRangeDropdown = ({ price, setPrice }) => {
         <RiWallet3Line className='dropdown-icon-primary' />
         <div>
           <div className='text-[15px] font-medium leading-tight text-left'>{price}</div>
-          <div className='text-[13px]'>Chọn khoảng giá</div>
+          <div className='text-[13px]'>Choose price range</div>
         </div>
         {isOpen ? (
           <RiArrowUpSLine className='dropdown-icon-secondary' />

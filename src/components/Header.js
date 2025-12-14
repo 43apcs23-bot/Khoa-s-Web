@@ -26,20 +26,17 @@ export const Header = () => {
         <Link to='/' className="
         text-3xl font-bold text-rose-500 first-letter:uppercase 
         hover:text-rose-600 transition duration-400 ease-in-out hover:scale-105 transform">
-          Cửa hàng giày
+          shoe Store
         </Link>
         <nav className='hidden md:flex gap-x-4'>
           <Link to='/' className='text-md font-medium text-[#000] hover:text-[#ff2554] transition duration-400 ease-in-out'>
-            Trang chủ
+            Home
           </Link>
           <Link to='/products' className='ml-6 text-md font-medium text-[#000] hover:text-[#ff2554] transition duration-400 ease-in-out'>
-            Sản phẩm
+            Products
           </Link>
           <Link to='/wishlist' className='ml-6 text-md font-medium text-[#000] hover:text-[#ff2554] transition duration-400 ease-in-out'>
-            Yêu thích
-          </Link>
-          <Link to='/orders' className='ml-6 text-md font-medium text-[#000] hover:text-[#ff2554] transition duration-400 ease-in-out'>
-            Đơn hàng
+            Wishlist
           </Link>
         </nav>
         <div className='hidden md:flex items-center gap-6'>
@@ -50,7 +47,7 @@ export const Header = () => {
               } type="button" onClick={() => {
                 setIsSignup(false)
               }}>
-                <Auth IsSignup={IsSignup} setIsSignup={setIsSignup} text={"Đăng nhập"} />
+                <Auth IsSignup={IsSignup} setIsSignup={setIsSignup} text={"Log in"} />
               </button>
               <button
                 className={
@@ -58,14 +55,14 @@ export const Header = () => {
                 } type="button" onClick={() => {
                   setIsSignup(true)
                 }}>
-                <Auth IsSignup={IsSignup} setIsSignup={setIsSignup} text={"Đăng ký"} />
+                <Auth IsSignup={IsSignup} setIsSignup={setIsSignup} text={"Sign up"} />
               </button>
             </>) : (
             <>
               {decodeData?.role === true && <AddProduct />}
               <Cart />
               <p className="bg-[#FE3E69] hover:bg-[#ff2f5c] fixed right-0 bottom-0 mr-7 mb-7 z-50 rounded-full p-2 text-white text-2xl cursor-pointer hover:scale-110 hover:animate-pulse transition-transform duration-300 ease-in-out" type='button' onClick={handleLogout}>
-                <BiLogOutCircle title="Đăng xuất" />
+                <BiLogOutCircle title="Logout" />
               </p>
             </>
           )}
@@ -80,25 +77,18 @@ export const Header = () => {
 
 const Options = [
   {
-    name: 'Sản phẩm',
-    description: 'Khám phá những sản phẩm tốt nhất cho bạn.',
+    name: 'Products',
+    description: 'Discover the best products for your needs.',
     href: '/products',
     icon: IconOne,
   },
   {
-    name: 'Yêu thích',
-    description: 'Tạo bộ sưu tập sản phẩm của bạn.',
+    name: 'Wishlist',
+    description: 'Create your own collection of products.',
     href: '/wishlist',
     icon: IconTwo,
   },
-  {
-    name: 'Đơn hàng',
-    description: 'Xem lịch sử đơn hàng của bạn',
-    href: '/orders',
-    icon: IconTwo,
-  },
 ]
-
 
 export default function PopoverFunction({
   IsSignup,
@@ -123,7 +113,7 @@ export default function PopoverFunction({
                 text-opacity-100
                 group inline-flex items-center text-base font-medium text-white hover:text-opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 bg-[#FE3E69] hover:bg-[#ff2f5c]  px-4 py-3 rounded-lg transition duration-400 ease-in-out cursor-pointer`}
         >
-          <span>Thực đơn</span>
+          <span>Menu</span>
           <IoIosArrowDown
             className={`${open ? 'transform rotate-180' : 'transform rotate-0'} ml-2 h-5 w-5 text-white transition duration-150 ease-in-out group-hover:text-opacity-80`}
             aria-hidden="true"
@@ -146,7 +136,7 @@ export default function PopoverFunction({
                   <Link key={item.name} to={item.href} className="-m-3 flex items-center rounded-lg p-2 transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus-visible:ring focus-visible:ring-rose-600 focus-visible:ring-opacity-50"
                     onClick={closeModalDropDown}>
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center text-white sm:h-12 sm:w-12">
-                      {item.icon && <item.icon aria-hidden="true" />}
+                      <item.icon aria-hidden="true" />
                     </div>
                     <div className="ml-4">
                       <p className="text-sm font-medium text-gray-900">
@@ -165,7 +155,7 @@ export default function PopoverFunction({
                     } type="button" onClick={() => {
                       setIsSignup(false)
                     }}>
-                      <Auth IsSignup={IsSignup} setIsSignup={setIsSignup} text={"Đăng nhập"} closeModalDropDown={closeModalDropDown} />
+                      <Auth IsSignup={IsSignup} setIsSignup={setIsSignup} text={"Log in"} closeModalDropDown={closeModalDropDown} />
                     </button>
                     <button
                       className={
@@ -173,7 +163,7 @@ export default function PopoverFunction({
                       } type="button" onClick={() => {
                         setIsSignup(true)
                       }}>
-                      <Auth IsSignup={IsSignup} setIsSignup={setIsSignup} text={"Đăng ký"} closeModalDropDown={closeModalDropDown} />
+                      <Auth IsSignup={IsSignup} setIsSignup={setIsSignup} text={"Sign up"} closeModalDropDown={closeModalDropDown} />
                     </button>
                   </div>
                 ) : (
@@ -181,7 +171,7 @@ export default function PopoverFunction({
                     <Cart />
                     {decodeData?.role === true && <AddProduct />}
                     <button className="bg-[#FE3E69] hover:bg-[#ff2f5c] rounded-full p-2 text-white text-2xl cursor-pointer hover:scale-110 hover:animate-pulse transition-transform duration-300 ease-in-out" type='button' onClick={handleLogout}>
-                      <BiLogOutCircle title="Đăng xuất" />
+                      <BiLogOutCircle title="Logout" />
                     </button>
                   </div>
                 )}
@@ -193,11 +183,11 @@ export default function PopoverFunction({
                 >
                   <span className="flex items-center">
                     <span className="text-sm font-medium text-gray-900">
-                      Mẹo & Thủ thuật
+                      Tips & Tricks
                     </span>
                   </span>
                   <span className="block text-sm text-gray-500">
-                    Bạn có thể thêm sản phẩm vào danh sách yêu thích bằng cách nhấn vào biểu tượng trái tim
+                    You can add products to your wishlist by clicking on the heart icon
                   </span>
                 </a>
               </div>
