@@ -7,15 +7,15 @@ const Banner = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const ShoeForMen = () => {
-    dispatch(setCategoryValue('Men'));
+    dispatch(setCategoryValue('Nam'));
     navigate('/products');
   };
   const ShoeForWomen = () => {
-    dispatch(setCategoryValue('Women'));
+    dispatch(setCategoryValue('Nữ'));
     navigate('/products');
   };
   const ShoeForKids = () => {
-    dispatch(setCategoryValue('Kids'));
+    dispatch(setCategoryValue('Trẻ em'));
     navigate('/products');
   };
   return (
@@ -24,23 +24,23 @@ const Banner = () => {
         <div className='basis-1/3 flex-1'>
           <h1 className='text-2xl sm:text-4xl font-semibold text-gray-800 mb-4 capitalize'>
             <p className='text-[#FE3E69] text-4xl lg:text-[66px] font-medium leading-none'>
-              Shoe Store</p> dream footwear store
+              Shoe Store</p> cửa hàng giày mơ ước
           </h1>
           <p className='mb-8 px-[0.5rem] lg:mx-10 text-justify font-normal text-xl'>
-            Shoe Store is a dream footwear store for all the shoe lovers. We have a wide range of shoes for all the occasions. Fluffy sneakers. Cushy slippers. Nights out. Days in. Quick errands. Transcontinental trips. Durable. Comfortable. Planet-friendly. Home or away, we’ve got what you needs to chill the most.
+            Shoe Store là cửa hàng giày mơ ước cho những người yêu giày. Chúng tôi có nhiều loại giày phù hợp cho mọi dịp: sneakers êm ái, dép thoải mái, đi chơi đêm hay dạo phố ban ngày. Bền, thoải mái và thân thiện với môi trường — ở nhà hay khi đi xa, chúng tôi có đôi giày phù hợp cho bạn.
           </p>
           <div className="flex gap-1 items-center justify-around py-2 text-[#FE3E69]">
             <button
               className='bg-[#FE3E69] hover:bg-[#fe2856] transition px-4 py-3 lg:max-w-[162px] rounded-lg text-white text-lg' onClick={ShoeForMen}>
-              Men Shoes
+              Giày Nam
             </button>
             <button
               className='bg-[#FE3E69] hover:bg-[#fe2856] transition px-4 py-3 lg:max-w-[162px] rounded-lg text-white text-lg' onClick={ShoeForWomen}>
-              Women Shoes
+              Giày Nữ
             </button>
             <button
               className='bg-[#FE3E69] hover:bg-[#fe2856] transition px-4 py-3 lg:max-w-[162px] rounded-lg text-white text-lg hidden sm:inline-block' onClick={ShoeForKids}>
-              Kids Shoes
+              Giày Trẻ em
             </button>
           </div>
         </div>

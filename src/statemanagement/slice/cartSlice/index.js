@@ -26,9 +26,9 @@ export const getCarts = () => async (dispatch) => {
         dispatch(setStatus(Status.IDLE));
     } catch (error) {
         if (error.response.status >= 400 && error.response.status <= 500) {
-            NotifyWarning(error.response.data.message)
+            NotifyWarning(error?.response?.data?.message || 'Đã có lỗi xảy ra')
         } else {
-            NotifyError(error.message)
+            NotifyError(error?.message || 'Đã có lỗi xảy ra')
         }
     }
 }
@@ -42,17 +42,17 @@ export const addCarts = ({ product, shoeId, notification }) => async (dispatch) 
         dispatch(addCartIds(data));
         dispatch(isOpenCart(true));
         if (notification !== false) {
-            NotifySuccess(message);
+            NotifySuccess(message || 'Đã thêm vào giỏ hàng');
         }
         dispatch(setStatus(Status.IDLE));
     } catch (error) {
         if (error?.response?.status >= 400 && error?.response?.status <= 500) {
             if (notification !== false) {
-                NotifyWarning(error?.response?.data?.message || 'Something went wrong')
+                NotifyWarning(error?.response?.data?.message || 'Đã có lỗi xảy ra')
             }
             return dispatch(setStatus(Status.FAILED));
         } else {
-            NotifyError(error?.message)
+            NotifyError(error?.message || 'Đã có lỗi xảy ra')
             return dispatch(setStatus(Status.FAILED));
         }
     }
@@ -69,14 +69,14 @@ export const deleteCarts = (id) => async (dispatch) => {
         localStorage.setItem('authenticate', token)
         dispatch(deleteCartData(id));
         dispatch(addCartIds(data));
-        NotifySuccess(message);
+        NotifySuccess(message || 'Đã xóa khỏi giỏ hàng');
         dispatch(setStatus(Status.IDLE));
     } catch (error) {
         if (error?.response?.status >= 400 && error?.response?.status <= 500) {
-            NotifyWarning(error?.response?.data?.message || 'Something went wrong')
+            NotifyWarning(error?.response?.data?.message || 'Đã có lỗi xảy ra')
             return dispatch(setStatus(Status.FAILED));
         } else {
-            NotifyError(error?.message)
+            NotifyError(error?.message || 'Đã có lỗi xảy ra')
             return dispatch(setStatus(Status.FAILED));
         }
     }
@@ -88,33 +88,34 @@ export const cartQuantity = ({ status, shoeId }) => async (dispatch) => {
         const { data: { message, token, data } } = await api.CartQuantityAPI(shoeId, status);
         dispatch(addCartIds(data));
         localStorage.setItem('authenticate', token)
-        NotifySuccess(message);
+        NotifySuccess(message || 'Cập nhật số lượng thành công');
         dispatch(setStatus(Status.IDLE));
     } catch (error) {
         if (error?.response?.status >= 400 && error?.response?.status <= 500) {
-            NotifyWarning(error?.response?.data?.message || 'Something went wrong')
+            NotifyWarning(error?.response?.data?.message || 'Đã có lỗi xảy ra')
             return dispatch(setStatus(Status.FAILED));
         } else {
-            NotifyError(error?.message)
+            NotifyError(error?.message || 'Đã có lỗi xảy ra')
             return dispatch(setStatus(Status.FAILED));
         }
     }
 }
 
-export const checkoutAct = (total) => async (dispatch) => {
+export const checkoutAct = (payload) => async (dispatch) => {
     dispatch(setStatus(Status.LOADING));
     try {
-        const { data: { message, token } } = await api.checkoutAPI(total);
+        const { data: { message, token, data } } = await api.checkoutAPI(payload);
         localStorage.setItem('authenticate', token)
         dispatch(checkoutCart());
-        NotifySuccess(message);
+        NotifySuccess(message || 'Thanh toán thành công');
         dispatch(setStatus(Status.IDLE));
+        return data; // return saved order to caller
     } catch (error) {
         if (error?.response?.status >= 400 && error?.response?.status <= 500) {
-            NotifyWarning(error?.response?.data?.message || 'Something went wrong')
+            NotifyWarning(error?.response?.data?.message || 'Đã có lỗi xảy ra')
             return dispatch(setStatus(Status.FAILED));
         } else {
-            NotifyError(error?.message)
+            NotifyError(error?.message || 'Đã có lỗi xảy ra')
             return dispatch(setStatus(Status.FAILED));
         }
     }

@@ -17,9 +17,9 @@ const Pagination = ({ Page, setPage }) => {
                 <TbDiscount className='dropdown-icon-primary' />
                 <div>
                     <div className='text-[15px] font-medium leading-tight'>
-                        {Page === 'Page (any)' || Page === "All Pages" ? Page : `Page ${Page}`}
+                        {Page === 'Trang (tất cả)' || Page === 'Tất cả trang' ? Page : `Trang ${Page}`}
                     </div>
-                    <div className='text-[13px]'>Choose Page</div>
+                    <div className='text-[13px]'>Chọn trang</div>
                 </div>
                 {isOpen ? (
                     <RiArrowUpSLine className='dropdown-icon-secondary' />

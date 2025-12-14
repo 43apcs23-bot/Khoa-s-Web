@@ -12,6 +12,9 @@ import Products from './pages/AllProduct';
 import Wishlist from './pages/wishlist';
 import ProductDetails from './pages/ProductDetails';
 import UserVerification from './pages/UserEmailVerification';
+import UserOrdersPage from './pages/UserOrdersPage';
+import OrderDetails from './pages/OrderDetails';
+import CheckoutPage from './pages/CheckoutPage';
 import { NotifyInfo } from './toastify';
 import { useLocation } from 'react-router-dom';
 const App = () => {
@@ -19,21 +22,24 @@ const App = () => {
   const location = useLocation();
   const token = localStorage.getItem('authenticate');
   React.useEffect(() => {
-    if (!token) {
-      navigate(location.pathname);
-    } else {
-      const decodeData = decodeToken(token);
-      const hoursLeft = (decodeData.exp * 1000 - new Date().getTime()) / 1000 / 60 / 60;
-      if (hoursLeft < 0) {
-        localStorage.removeItem('authenticate');
-        NotifyInfo('Your session has expired. Please login again');
-        navigate('/');
-      }
-      if (hoursLeft < 24) {
-        NotifyInfo('Your session will expire in ' + hoursLeft + ' hours');
-      }
+  if (!token) {
+    navigate(location.pathname);
+  } else {
+    const decodeData = decodeToken(token);
+    const hoursLeft =
+      (decodeData.exp * 1000 - new Date().getTime()) / 1000 / 60 / 60;
+
+    if (hoursLeft < 0) {
+      localStorage.removeItem('authenticate');
+      NotifyInfo('Phiên của bạn đã hết hạn. Vui lòng đăng nhập lại');
+      navigate('/');
     }
-  }, [token, navigate]);
+
+    if (hoursLeft < 24) {
+      NotifyInfo('Phiên của bạn sẽ hết hạn trong ' + Math.round(hoursLeft) + ' giờ');
+    }
+  }
+  }, [token, navigate, location.pathname]);
   return (
     <div className='max-w-[1440px] mx-auto bg-white'>
       <Header />
@@ -42,8 +48,10 @@ const App = () => {
         <Route path='/product/:id' element={<ProductDetails />} />
         <Route path='/products' element={<Products />} />
         <Route path='/wishlist' element={<Wishlist />} />
+        <Route path='/orders' element={<UserOrdersPage />} />
+        <Route path='/orders/:id' element={<OrderDetails />} />
+        <Route path='/checkout' element={<CheckoutPage />} />
         <Route path='/user/:userId/verify/:verifyId' element={<UserVerification />} />
-
         <Route path='*' element={<PageNotFound />} />
       </Routes>
       <Footer />

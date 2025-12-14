@@ -18,8 +18,7 @@ const Home = () => {
     <div className='min-h-[1400px]'>
       <Banner />
       <Search brandValue={brand} categoryValue={category} priceValue={price} pageValue={page} loading={loading} />
-      <ProductList data={shoeData} error={error} loading={loading} title='Our Products' limit={4} />
-      <TopProduct />
+      <ProductList data={shoeData} error={error} loading={loading} title='Sản phẩm' limit={4} />
     </div>
   );
 };

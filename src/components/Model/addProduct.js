@@ -13,8 +13,8 @@ export default function AddProduct() {
         title: '',
         description: '',
         price: '',
-        category: ["Men", "Women", "Kids"],
-        shoeFor: ["Lounging", "Everyday", "Running"],
+        category: ["Nam", "Nữ", "Trẻ em"],
+        shoeFor: ["Thư giãn", "Hàng ngày", "Chạy bộ"],
         quantity: '',
         selectedFile: [],
         brand: '',
@@ -40,7 +40,7 @@ export default function AddProduct() {
                 onClick={openModal}
             >
                 <p className='absolute text-white text-sm font-bold -mt-1 ml-4'>+</p>
-                <GiRunningShoe className='text-2xl' title='Add Product' />
+                <GiRunningShoe className='text-2xl' title='Thêm sản phẩm' />
             </button>
 
             <Transition appear show={isOpen} as={Fragment}>
@@ -73,23 +73,23 @@ export default function AddProduct() {
                                             as="h3"
                                             className="text-lg font-medium -m-2 text-gray-900 text-center"
                                         >
-                                            Add New Shoes
+                                            Thêm giày mới
                                         </Dialog.Title>
                                         <div>
-                                            <label htmlFor="title">Title</label>
+                                            <label htmlFor="title">Tiêu đề</label>
                                             <div className="mt-1">
                                                 <input onChange={handleChange} id="title" name="title" type="text" autoComplete="title" />
                                             </div>
                                         </div>
                                         <div>
-                                            <label htmlFor="brand">Brand Name</label>
+                                            <label htmlFor="brand">Thương hiệu</label>
                                             <div className="mt-1">
                                                 <input onChange={handleChange} id="brand"
                                                     name="brand" type="text" />
                                             </div>
                                         </div>
                                         <div className="w-full">
-                                            <label htmlFor="description">Description</label>
+                                            <label htmlFor="description">Mô tả</label>
                                             <div className="mt-1">
                                                 <textarea onChange={handleChange} id="description" name="description" type="text"
                                                     rows={1} />
@@ -99,43 +99,43 @@ export default function AddProduct() {
                                             <UploadImage AddProductData={AddProductData} setAddProductData={setAddProductData} />
                                         </div>
                                         <div className="w-full">
-                                            <label htmlFor="category">Category</label>
+                                            <label htmlFor="category">Danh mục</label>
                                             <div className="mt-1">
                                                 <Category category={AddProductData.category} setCategory={setAddProductData} AddProductData={AddProductData} />
                                             </div>
                                         </div>
                                         <div className="w-full">
-                                            <label htmlFor="category">Shoe For</label>
+                                            <label htmlFor="category">Dành cho</label>
                                             <div className="mt-1">
                                                 <ShoeForOption shoeFor={AddProductData.shoeFor} setShoeFor={setAddProductData} AddProductData={AddProductData} />
                                             </div>
                                         </div>
                                         <div className="w-full md:w-1/2 md:inline-block md:mr-1">
-                                            <label htmlFor="quantity">Quantity</label>
+                                            <label htmlFor="quantity">Số lượng</label>
                                             <div className="mt-1">
                                                 <input onChange={handleChange}
                                                     name="quantity" type="text" />
                                             </div>
                                         </div>
                                         <div className="w-full md:w-[48%] md:inline-block">
-                                            <label htmlFor="price">Price</label>
+                                            <label htmlFor="price">Giá</label>
                                             <div className="mt-1">
                                                 <div className="flex">
                                                     <span className="inline-flex items-center px-3 text-sm rounded-l-md border border-r-0 dark:bg-[#fff] dark:text-black dark:border-[#edd5da]">
-                                                        Rs.
+                                                        VND
                                                     </span>
                                                     <input type="text" onChange={handleChange}
                                                         pattern="[0-9]*" name="price" className="rounded-none rounded-r-lg bg-gray-50 border text-gray-900 focus:border-rose-500
-                                                        focus:border-l-0 block flex-1 min-w-0 w-full text-sm border-[#edd5da] p-2.5 dark:bg-white dark:text-black dark:border-[#edd5da]" placeholder="price" />
+                                                        focus:border-l-0 block flex-1 min-w-0 w-full text-sm border-[#edd5da] p-2.5 dark:bg-white dark:text-black dark:border-[#edd5da]" placeholder="giá" />
                                                 </div>
                                             </div>
                                         </div>
                                         <button type="button" id="submit" onClick={(e) => handleSubmit(e)} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#fe2856] hover:bg-[#fe2856] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#fe2856]">
-                                            Add Product
+                                            Thêm sản phẩm
                                         </button>
                                         <p className="text-center text-sm text-gray-500
                                         first-letter:capitalize">
-                                            click on the overlay to close the popup window
+                                            Nhấp vào nền để đóng cửa sổ
                                         </p>
                                     </div>
                                 </Dialog.Panel>

@@ -13,42 +13,42 @@ const Search = ({ brandValue, categoryValue, priceValue, pageValue }) => {
     dispatch(getAllFilterData());
   }, [dispatch]);
 
-  const [Category, setCategory] = React.useState(categoryValue || 'Category (any)');
-  const [Price, setPrice] = React.useState(priceValue || 'Price range (any)');
-  const [Brand, setbrand] = React.useState(brandValue || 'Brand (any)');
-  const [Page, setPage] = React.useState(pageValue || "Page (any)");
+  const [Category, setCategory] = React.useState(categoryValue || 'Danh mục (tất cả)');
+  const [Price, setPrice] = React.useState(priceValue || 'Khoảng giá (tất cả)');
+  const [Brand, setbrand] = React.useState(brandValue || 'Thương hiệu (tất cả)');
+  const [Page, setPage] = React.useState(pageValue || "Trang (tất cả)");
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (Page !== "Page (any)" && Page !== "All Pages") {
+    if (Page !== "Trang (tất cả)" && Page !== "Tất cả trang") {
       dispatch(setPageValue(Page));
     } else {
       dispatch(setPageValue(''));
     }
-    if (Category !== 'Category (any)' && Category !== 'All Categories') {
+    if (Category !== 'Danh mục (tất cả)' && Category !== 'Tất cả danh mục') {
       dispatch(setCategoryValue(Category));
     } else {
       dispatch(setCategoryValue(''));
     }
-    if (Price !== 'Price range (any)' && Price !== 'All Prices') {
+    if (Price !== 'Khoảng giá (tất cả)' && Price !== 'Tất cả giá') {
       dispatch(setPriceValue(Price));
     } else {
       dispatch(setPriceValue(''));
     }
-    if (Brand !== 'Brand (any)' && Brand !== 'All Brands') {
+    if (Brand !== 'Thương hiệu (tất cả)' && Brand !== 'Tất cả thương hiệu') {
       dispatch(setBrandValue(Brand));
     } else {
       dispatch(setBrandValue(''));
     }
-    if (Brand === 'Brand (any)' && Price === 'Price range (any)' && Category === 'Category (any)' && Page === "Page (any)") {
-      return NotifyWarning('Please select any filter');
+    if (Brand === 'Thương hiệu (tất cả)' && Price === 'Khoảng giá (tất cả)' && Category === 'Danh mục (tất cả)' && Page === "Trang (tất cả)") {
+      return NotifyWarning('Vui lòng chọn bộ lọc');
     }
-    if (Category === 'All Categories' && Price === 'All Prices' && Brand === 'All Brands' && Page === "All Pages" && brandValue === '' && priceValue === '' && categoryValue === '' && pageValue === '') {
-      return NotifyWarning('No filter selected');
+    if (Category === 'Tất cả danh mục' && Price === 'Tất cả giá' && Brand === 'Tất cả thương hiệu' && Page === "Tất cả trang" && brandValue === '' && priceValue === '' && categoryValue === '' && pageValue === '') {
+      return NotifyWarning('Không có bộ lọc được chọn');
     }
     if (Brand === brandValue && Price === priceValue && Category === categoryValue) {
-      return NotifyInfo(`You have already selected ${Brand} brand, ${Price} price range and ${Category} category`);
+      return NotifyInfo(`Bạn đã chọn thương hiệu ${Brand}, khoảng giá ${Price} và danh mục ${Category}`);
     }
-    NotifySuccess('Filter applied successfully');
+    NotifySuccess('Áp dụng bộ lọc thành công');
   };
   return (
     <div className='px-[30px] py-6 max-w-[1170px] mx-auto flex flex-col items-center lg:flex-row justify-between gap-4 lg:gap-x-3 relative -top-3 lg:-top-4 lg:shadow-1 bg-white lg:bg-transparent lg:backdrop-blur rounded-lg'>
