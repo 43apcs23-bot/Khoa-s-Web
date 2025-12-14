@@ -8,20 +8,6 @@ export default function Categorys({ category, setCategory, AddProductData }) {
     const BACKSPACE = 8;
     const [value, setValue] = useState("");
 
-    const handleKeyUp = (e) => {
-        const key = e.keyCode;
-        if (key === COMMA || key === SPACE || key === ENTER) {
-            addCategory();
-        }
-    };
-
-    const handleKeyDown = (e) => {
-        const key = e.keyCode;
-        if (key === BACKSPACE && !value) {
-            editCategory();
-        }
-    };
-
     const addCategory = () => {
         let addCat = value.trim().replace(/,/g, "");
         if (!addCat) return;
@@ -32,7 +18,7 @@ export default function Categorys({ category, setCategory, AddProductData }) {
     const resetCategory = () => {
         setValue("");
         setCategory({
-            ...AddProductData, category: ["Men", "Women", "Kids"]
+            ...AddProductData, category: ["Nam", "Nữ", "Trẻ em"]
         })
     };
     const editCategory = () => setValue(category.pop());
@@ -81,11 +67,11 @@ export default function Categorys({ category, setCategory, AddProductData }) {
                                 category: category.filter((t) => t !== cat || category.length === 1),
                             });
                             if (category.length === 1) {
-                                NotifyInfo("You must have at least one category");
+                                NotifyInfo("Bạn phải có ít nhất một danh mục");
                             }
                         }}
                     >
-                        <span className="sr-only">Remove Category</span>
+                        <span className="sr-only">Xóa danh mục</span>
                         <svg
                             className="h-2 w-2"
                             stroke="currentColor"
@@ -103,10 +89,10 @@ export default function Categorys({ category, setCategory, AddProductData }) {
                 </div>
             ))}
             <button type="button" className=" bg-gray-100 rounded-full px-3 py-1 mb-0 mr-2 text-sm
-                        text-black font-normal" onClick={resetCategory}> Reset </button>
+                        text-black font-normal" onClick={resetCategory}> Đặt lại </button>
             {/* <input
                 type="text"
-                placeholder="Press enter, space or comma to add category"
+                placeholder="Nhấn Enter, dấu cách hoặc dấu phẩy để thêm danh mục"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 onKeyUp={handleKeyUp}

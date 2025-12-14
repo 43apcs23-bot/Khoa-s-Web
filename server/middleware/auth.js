@@ -1,12 +1,17 @@
 import jwt from "jsonwebtoken";
+
 const auth = async (req, res, next) => {
   try {
     if (!req.cookies.token) {
-      return res.status(401).json({ message: "Session expired, please login again" });
+      return res.status(401).json({
+        message: "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại"
+      });
     }
+
     const cookie = req.cookies.token;
     let decodedData;
     decodedData = jwt.verify(cookie, process.env.JWT_SECRET);
+
     if (decodedData) {
       req.userId = decodedData?._id;
       next();
@@ -15,26 +20,37 @@ const auth = async (req, res, next) => {
     }
   } catch (error) {
     res.clearCookie("token");
-    res.status(440).json({ message: "Sorry, you are not authorized" });
+    res.status(440).json({
+      message: "Xin lỗi, bạn không có quyền truy cập"
+    });
   }
 };
 
 const checkAdmin = async (req, res, next) => {
   try {
     if (!req.cookies.token) {
-      return res.status(401).json({ message: "Session expired, please login again" });
+      return res.status(401).json({
+        message: "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại"
+      });
     }
+
     const cookie = req.cookies.token;
     let decodedData;
     decodedData = jwt.verify(cookie, process.env.JWT_SECRET);
+
     if (decodedData?.role === true) {
       req.userId = decodedData?._id;
       next();
     } else {
-      res.status(440).json({ message: "Unauthorized Admin" });
+      res.status(440).json({
+        message: "Bạn không có quyền quản trị"
+      });
     }
   } catch (error) {
-    res.status(440).json({ message: error.message });
+    res.status(440).json({
+      message: "Xác thực thất bại, vui lòng đăng nhập lại"
+    });
   }
 };
+
 export { auth, checkAdmin };

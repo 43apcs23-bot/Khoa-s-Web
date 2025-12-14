@@ -3,34 +3,51 @@ import jwt from 'jsonwebtoken';
 import User from "../models/user.js";
 import verifyUser from "../models/valideUser.js";
 import { CheckoutEmail, sendEmail } from "../Utils/nodemailer.js";
+import Order from '../models/order.js';
 import Product from '../models/productModel.js';
 import { APIfeatures } from './paginate.js';
+
 const generateToken = (data) => {
     const { email, name, role, wishlist, number, address, cart } = data;
-    return jwt.sign({ email, name, role, wishlist, number, address, cart }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
-}
+    return jwt.sign(
+        { email, name, role, wishlist, number, address, cart },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
+};
+
 const generateSessionToken = (data, res) => {
     const { _id, role } = data;
-    const token = jwt.sign({ _id, role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+    const token = jwt.sign(
+        { _id, role },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
     res.cookie('token', token, {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production' ? true : false,
         sameSite: 'strict'
     });
-}
+};
 
 export const signin = async (req, res) => {
     const { email, password } = req.body;
     try {
         if (!email || !password) {
-            return res.status(400).json({ message: "Please fill all the fields" });
+            return res.status(400).json({ message: "Vui lòng điền đầy đủ thông tin" });
         }
+
         const existingUser = await User.findOne({ email });
-        if (!existingUser) return res.status(404).json({ message: "User doesn't exist." });
+        if (!existingUser)
+            return res.status(404).json({ message: "Người dùng không tồn tại" });
+
         const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
-        if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials." });
+        if (!isPasswordCorrect)
+            return res.status(400).json({ message: "Thông tin đăng nhập không hợp lệ" });
+
         const token = generateToken(existingUser);
+
         if (!existingUser?.verifiedUser) {
             let checkVerify = await verifyUser.findOne({ userId: existingUser._id });
             if (!checkVerify) {
@@ -38,58 +55,78 @@ export const signin = async (req, res) => {
                     userId: existingUser._id,
                     token: token,
                 }).save();
-                const url = `${process.env.BASE_URL}user/${existingUser._id}/verify/${checkVerify.token}`;
-                sendEmail(existingUser.email, "Verify Email from Shoes Store", url);
-                return res.status(355).json({ message: 'Please verify your email' });
+
+                const baseUrl = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/+$/g, '');
+                const url = `${baseUrl}/user/${existingUser._id}/verify/${checkVerify.token}`;
+
+                sendEmail(existingUser.email, "Xác minh email từ Shoes Store", url);
+                return res.status(355).json({ message: "Vui lòng xác minh email của bạn" });
             }
-            return res
-                .status(355)
-                .send({ message: "Verify link has already been sent to your email" });
+
+            return res.status(355).send({
+                message: "Link xác minh đã được gửi, vui lòng kiểm tra email"
+            });
         }
+
         generateSessionToken(existingUser, res);
-        // check it is morning or evening
+
         const time = new Date().getHours();
         let greeting;
-        if (time >= 5 && time < 12) {
-            greeting = "Good Morning";
-        } else if (time >= 12 && time < 17) {
-            greeting = "Good Afternoon";
-        } else if (time >= 17 && time < 20) {
-            greeting = "Good Evening";
-        } else {
-            greeting = "Good Night";
-        }
-        existingUser.role === true ? res.status(200).json({ token, message: `${greeting} & Welcome Admin, ${existingUser.name.split(" ")[0]}` }) : res.status(200).json({ token, message: `${greeting} & Welcome Back, ${existingUser.name.split(" ")[0]}` });
+        if (time >= 5 && time < 12) greeting = "Chào buổi sáng";
+        else if (time >= 12 && time < 17) greeting = "Chào buổi chiều";
+        else if (time >= 17 && time < 20) greeting = "Chào buổi tối";
+        else greeting = "Chúc ngủ ngon";
+
+        existingUser.role === true
+            ? res.status(200).json({
+                token,
+                message: `${greeting} & Chào mừng Quản trị viên, ${existingUser.name.split(" ")[0]}`
+            })
+            : res.status(200).json({
+                token,
+                message: `${greeting} & Chào mừng bạn quay lại, ${existingUser.name.split(" ")[0]}`
+            });
+
     } catch (err) {
-        res.status(500).json({ message: err.message })
+        res.status(500).json({ message: err.message });
     }
-}
+};
 
 export const signOut = async (req, res) => {
     const { userId } = req;
     try {
         if (!userId) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(400).json({ message: "Không tìm thấy người dùng" });
         }
+
         const userName = await User.findById(userId).select("name");
         res.clearCookie("token");
-        res.status(200).json({ message: `Goodbye, ${userName.name.split(" ")[0]}` });
+
+        res.status(200).json({
+            message: `Tạm biệt, ${userName.name.split(" ")[0]}`
+        });
     } catch (err) {
-        res.status(500).json({ message: err.message })
+        res.status(500).json({ message: err.message });
     }
-}
+};
 
 export const signup = async (req, res) => {
     const { email, password, firstName, number, lastName, role, address } = req.body;
     try {
         let existingUser = await User.findOne({ email });
-        if (existingUser) return res.status(400).json({ message: "User already exists." });
+        if (existingUser)
+            return res.status(400).json({ message: "Người dùng đã tồn tại" });
+
         if (firstName === "" || lastName === "" || email === "" || password === "") {
-            return res.status(400).json({ message: "Please fill all the fields" });
+            return res.status(400).json({ message: "Vui lòng điền đầy đủ thông tin" });
         } else if (password.length < 6) {
-            return res.status(400).json({ message: "Password must be atleast 6 characters long" });
+            return res.status(400).json({
+                message: "Mật khẩu phải có ít nhất 6 ký tự"
+            });
         }
+
         const hashedPassword = await bcrypt.hash(password, 12);
+
         existingUser = await new User({
             email,
             password: hashedPassword,
@@ -98,21 +135,32 @@ export const signup = async (req, res) => {
             role,
             address
         }).save();
+
         const createVerify = await new verifyUser({
             userId: existingUser._id,
             token: generateToken(existingUser),
         }).save();
-        const url = `${process.env.BASE_URL}user/${existingUser._id}/verify/${createVerify.token}`;
-        const { status } = await sendEmail(existingUser.email, "Verify Email from Shoes Store", url);
+
+        const baseUrl = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/+$/g, '');
+        const url = `${baseUrl}/user/${existingUser._id}/verify/${createVerify.token}`;
+
+        const { status } = await sendEmail(
+            existingUser.email,
+            "Xác minh email từ Shoes Store",
+            url
+        );
+
         if (status < 400) {
-            res.status(200).json({ message: "User registered successfully. Please verify your email" });
+            res.status(200).json({
+                message: "Đăng ký thành công. Vui lòng xác minh email"
+            });
         } else {
-            res.status(355).json({ message: "email verification fail check your terminal you got error message" });
+            res.status(355).json({
+                message: "Gửi email xác minh thất bại, vui lòng kiểm tra lỗi"
+            });
         }
     } catch (error) {
-        res.json({
-            message: error.message
-        })
+        res.json({ message: error.message });
     }
 };
 
@@ -120,17 +168,35 @@ export const getVerified = async (req, res) => {
     const { userId, verifyId } = req.params;
     try {
         const user = await User.findOne({ _id: userId });
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user)
+            return res.status(404).json({ message: "Không tìm thấy người dùng" });
+
         const Verified = await verifyUser.findOne({
             userId: user._id,
             token: verifyId,
         });
-        if (!Verified) return res.status(404).json({ message: "Invalid verification link" });
+
+        if (!Verified)
+            return res.status(404).json({ message: "Link xác minh không hợp lệ" });
+
         await User.updateOne({ _id: user._id }, { verifiedUser: true });
         await Verified.remove();
+
         const token = generateToken(user);
         generateSessionToken(user, res);
-        user.role === 1 ? res.status(200).json({ token, message: `Welcome Admin, ${user.name.split(" ")[0]}`, verifyMessage: " Email Verified" }) : res.status(200).json({ token, message: `Welcome Back, ${user.name.split(" ")[0]}`, verifyMessage: " Email Verified" });
+
+        user.role === 1
+            ? res.status(200).json({
+                token,
+                message: `Chào mừng Quản trị viên, ${user.name.split(" ")[0]}`,
+                verifyMessage: "Email đã được xác minh"
+            })
+            : res.status(200).json({
+                token,
+                message: `Chào mừng bạn quay lại, ${user.name.split(" ")[0]}`,
+                verifyMessage: "Email đã được xác minh"
+            });
+
     } catch (error) {
         res.status(500).send({ message: error.message });
     }
@@ -140,15 +206,24 @@ export const addWishlist = async (req, res) => {
     const { id } = req.params;
     try {
         const user = await User.findById(req.userId);
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user)
+            return res.status(404).json({ message: "Không tìm thấy người dùng" });
+
         const checkWishlist = user.wishlist.find((item) => item === id);
         if (checkWishlist) {
-            return res.status(400).json({ data: user.wishlist, message: "Product already in wishlist" });
+            return res.status(400).json({
+                data: user.wishlist,
+                message: "Sản phẩm đã có trong danh sách yêu thích"
+            });
         } else {
             user.wishlist.push(id);
             await user.save();
             const token = generateToken(user);
-            res.status(200).json({ token, data: user.wishlist, message: "Product added to wishlist" });
+            res.status(200).json({
+                token,
+                data: user.wishlist,
+                message: "Đã thêm sản phẩm vào danh sách yêu thích"
+            });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -159,15 +234,26 @@ export const removeWishlist = async (req, res) => {
     const { id } = req.params;
     try {
         const user = await User.findById(req.userId);
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user)
+            return res.status(404).json({ message: "Không tìm thấy người dùng" });
+
         const checkWishlist = user.wishlist.find((item) => item === id);
         if (!checkWishlist) {
-            return res.status(400).json({ data: user.wishlist, message: "Product not in wishlist" });
+            return res.status(400).json({
+                data: user.wishlist,
+                message: "Sản phẩm không có trong danh sách yêu thích"
+            });
         }
+
         user.wishlist = user.wishlist.filter((item) => item !== id);
         await user.save();
+
         const token = generateToken(user);
-        res.status(200).json({ token, data: user.wishlist, message: "Product removed from wishlist" });
+        res.status(200).json({
+            token,
+            data: user.wishlist,
+            message: "Đã xoá sản phẩm khỏi danh sách yêu thích"
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -176,12 +262,20 @@ export const removeWishlist = async (req, res) => {
 export const getWishlist = async (req, res) => {
     try {
         const user = await User.findById(req.userId);
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user)
+            return res.status(404).json({ message: "Không tìm thấy người dùng" });
+
         req.query.page = parseInt(req.query.page);
         req.query.limit = parseInt(req.query.limit);
-        const features = new APIfeatures(Product.find({ _id: { $in: user.wishlist } }), req.query).sorting().paginating().filtering()
+
+        const features = new APIfeatures(
+            Product.find({ _id: { $in: user.wishlist } }),
+            req.query
+        ).sorting().paginating().filtering();
+
         const data = await features.query;
         const token = generateToken(user);
+
         res.status(200).json({ token, data });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -191,8 +285,13 @@ export const getWishlist = async (req, res) => {
 export const getCart = async (req, res) => {
     try {
         const user = await User.findById(req.userId);
-        if (!user) return res.status(404).json({ message: "User not found" });
-        const products = await Product.find({ _id: { $in: user.cart.map((item) => item.cartId) } });
+        if (!user)
+            return res.status(404).json({ message: "Không tìm thấy người dùng" });
+
+        const products = await Product.find({
+            _id: { $in: user.cart.map((item) => item.cartId) }
+        });
+
         const token = generateToken(user);
         res.status(200).json({ token, data: products });
     } catch (error) {
@@ -204,21 +303,34 @@ export const addCart = async (req, res) => {
     const { id } = req.params;
     try {
         const user = await User.findById(req.userId);
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user)
+            return res.status(404).json({ message: "Không tìm thấy người dùng" });
+
         const checkCart = user.cart.find((item) => item.cartId === id);
         if (checkCart) {
-            return res.status(400).json({ data: user.cart, message: "Product already in cart" });
+            return res.status(400).json({
+                data: user.cart,
+                message: "Sản phẩm đã có trong giỏ hàng"
+            });
         } else {
             const product = await Product.findById(id);
             if (product.quantity === 0) {
-                return res.status(400).json({ data: user.cart, message: "Product out of stock" });
+                return res.status(400).json({
+                    data: user.cart,
+                    message: "Sản phẩm đã hết hàng"
+                });
             } else {
                 const cartId = id;
                 const quantity = 1;
                 user.cart.push({ cartId, quantity });
                 await user.save();
+
                 const token = generateToken(user);
-                res.status(200).json({ token, data: user.cart, message: "Product added to cart" });
+                res.status(200).json({
+                    token,
+                    data: user.cart,
+                    message: "Đã thêm sản phẩm vào giỏ hàng"
+                });
             }
         }
     } catch (error) {
@@ -230,15 +342,25 @@ export const removeCart = async (req, res) => {
     const { id } = req.params;
     try {
         const user = await User.findById(req.userId);
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user)
+            return res.status(404).json({ message: "Không tìm thấy người dùng" });
+
         const checkCart = user.cart.find((item) => item.cartId === id);
         if (!checkCart) {
-            return res.status(400).json({ data: user.cart, message: "Product not in cart" });
+            return res.status(400).json({
+                data: user.cart,
+                message: "Sản phẩm không có trong giỏ hàng"
+            });
         } else {
             user.cart = user.cart.filter((item) => item.cartId !== id);
             await user.save();
+
             const token = generateToken(user);
-            res.status(200).json({ token, data: user.cart, message: "Product removed from cart" });
+            res.status(200).json({
+                token,
+                data: user.cart,
+                message: "Đã xoá sản phẩm khỏi giỏ hàng"
+            });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -249,20 +371,29 @@ export const cartQuantity = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
+
         const user = await User.findById(req.userId);
-        if (!user) return res.status(400).json({ message: "User does not exist." });
+        if (!user)
+            return res.status(400).json({ message: "Người dùng không tồn tại" });
+
         const product = await Product.findById(id);
         const quantity = user.cart.find((item) => item.cartId === id).quantity;
+
         if (status === "increase") {
-            if (product.quantity <= quantity) { return res.status(400).json({ message: "Product out of stock" }); }
+            if (product.quantity <= quantity) {
+                return res.status(400).json({ message: "Sản phẩm đã hết hàng" });
+            }
         }
+
         const checkCart = user.cart.find((item) => item.cartId === id);
         if (!checkCart) {
-            return res.status(400).json({ data: user.cart, message: "Product not in cart" });
+            return res.status(400).json({
+                data: user.cart,
+                message: "Sản phẩm không có trong giỏ hàng"
+            });
         } else {
             if (status === "increase") {
                 user.cart = user.cart.map((item) => {
-                    console.log(item);
                     if (item.cartId === id) {
                         item.quantity = item.quantity + 1;
                     }
@@ -271,40 +402,124 @@ export const cartQuantity = async (req, res) => {
             } else {
                 user.cart = user.cart.map((item) => {
                     if (item.cartId === id) {
-                        if (item.quantity === 1) {
-                            return item;
-                        } else {
+                        if (item.quantity !== 1) {
                             item.quantity = item.quantity - 1;
                         }
                     }
                     return item;
                 });
             }
-            await User.findByIdAndUpdate({ _id: req.userId }, {
-                cart: user.cart,
-            });
-            console.log(user.cart);
+
+            await User.findByIdAndUpdate(
+                { _id: req.userId },
+                { cart: user.cart }
+            );
+
             const token = generateToken(user);
-            res.status(200).json({ token, data: user.cart, message: "Cart quantity updated" });
+            res.status(200).json({
+                token,
+                data: user.cart,
+                message: "Đã cập nhật số lượng sản phẩm trong giỏ hàng"
+            });
         }
     } catch (err) {
-        return res.status(500).json({ message: err.message })
+        return res.status(500).json({ message: err.message });
     }
-}
+};
 
 export const checkout = async (req, res) => {
     try {
-        const { total } = req.body;
+        const { total, shippingInfo, paymentMethod } = req.body;
+
         const user = await User.findById(req.userId);
-        if (!user) return res.status(404).json({ message: "User not found" });
-        const products = await Product.find({ _id: { $in: user.cart.map((item) => item.cartId) } });
-        const cart = user.cart;
-        CheckoutEmail("Order Summary", user, total, cart, products);
-        const updateUser = await User.findByIdAndUpdate({ _id: req.userId }, {
-            cart: [],
+        if (!user) {
+            return res.status(404).json({ message: "Không tìm thấy người dùng" });
+        }
+
+        if (!user.cart || user.cart.length === 0) {
+            return res.status(400).json({ message: "Giỏ hàng trống" });
+        }
+
+        // 1. Lấy danh sách sản phẩm trong giỏ
+        const products = await Product.find({
+            _id: { $in: user.cart.map(item => item.cartId) }
         });
-        const token = generateToken(updateUser);
-        res.status(200).json({ token, message: "Checkout successful, check your email for details" });
+
+        // 2. Map để dễ truy xuất
+        const productMap = new Map();
+        products.forEach(p => productMap.set(p._id.toString(), p));
+
+        // 3. Kiểm tra tồn kho
+        for (const item of user.cart) {
+            const product = productMap.get(item.cartId);
+
+            if (!product) {
+                return res.status(404).json({
+                    message: "Có sản phẩm trong giỏ không còn tồn tại"
+                });
+            }
+
+            if (product.quantity < item.quantity) {
+                return res.status(400).json({
+                    code: "OUT_OF_STOCK",
+                    productId: product._id,
+                    available: product.quantity,
+                    requested: item.quantity,
+                    message: `Sản phẩm "${product.title}" không đủ số lượng`
+                });
+            }
+        }
+
+        // 4. Trừ tồn kho
+        for (const item of user.cart) {
+            await Product.findByIdAndUpdate(
+                item.cartId,
+                { $inc: { quantity: -item.quantity } }
+            );
+        }
+
+        // 5. Tạo đơn hàng
+        const orderItems = user.cart.map(item => {
+            const p = productMap.get(item.cartId);
+            return {
+                productId: p._id,
+                title: p.title,
+                price: p.price,
+                quantity: item.quantity
+            };
+        });
+
+        const newOrder = new Order({
+            userId: user._id,
+            items: orderItems,
+            totalAmount: total,
+            paymentMethod: paymentMethod || 'COD',
+            shippingInfo: shippingInfo || user.address || {}
+        });
+
+        const savedOrder = await newOrder.save();
+
+        // 5. Gửi email
+        CheckoutEmail(
+            "Tóm tắt đơn hàng",
+            user,
+            total,
+            user.cart,
+            products
+        );
+
+        // 6. Xoá toàn bộ giỏ hàng (vì mua hết)
+        user.cart = [];
+        await user.save();
+
+        const token = generateToken(user);
+
+        res.status(200).json({
+            token,
+            data: savedOrder,
+            message: "Thanh toán thành công, vui lòng kiểm tra email để xem chi tiết"
+        });
+
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

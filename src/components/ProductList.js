@@ -6,7 +6,7 @@ const ProductList = ({ data, runningData, error, loungingData, everydayData, loa
   if (error === true) {
     return (
       <div className='text-center text-3xl text-gray-400 my-48'>
-        {title === 'WishList' ? 'No items in your wishlist!' : 'No Shoes Found!'}
+        {title === 'Yêu thích' || title === 'WishList' ? 'Không có mục nào trong danh sách yêu thích!' : 'Không tìm thấy sản phẩm!'}
       </div>
     );
   }
@@ -15,9 +15,9 @@ const ProductList = ({ data, runningData, error, loungingData, everydayData, loa
       <div className='container mx-auto'>
         <div
           className='text-center text-[1.75rem] font-bold text-black mb-2' style={style}
-        >{title} {category ? `for ${category}` : ""}</div>
+        >{title} {category ? `cho ${category}` : ""}</div>
         <div className='text-center text-gray-700 mb-7 mt-3 mx-auto text-md font-[400] max-w-2xl italic' style={style}>
-          Fluffy sneakers. Cushy slippers. Ridiculously fluffy pants. Home or away, we’ve got what he needs to chill the most.</div>
+          Giày thể thao siêu bông. Dép mềm êm. Quần bông thật xù. Ở nhà hay ra ngoài, chúng tôi có mọi thứ anh ấy cần để thư giãn.</div>
         {loading ? <LoadingCard /> :
           <div className={data?.length >= 4 ? `grid md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8` : data?.length === 3 ? `grid md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8` : data?.length === 2 ? `grid md:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-8` : data?.length === 1 ? `grid md:grid-cols-1 lg:grid-cols-1 gap-4 lg:gap-8` : ""}>
             {data?.slice()?.reverse()?.map((Products, index) => {
@@ -35,9 +35,9 @@ const ProductList = ({ data, runningData, error, loungingData, everydayData, loa
             <div className='w-full h-[1px] bg-[#957272] mt-12 mb-10'></div>
             <div
               className='text-center text-[1.75rem] font-bold text-black mb-2' style={style}
-            >Lounging Shoe {category ? `for ${category}` : ""} </div>
+            >Giày thư giãn {category ? `cho ${category}` : ""} </div>
             <div className='text-center text-gray-700 mb-7 mt-3 mx-auto text-md font-[400] max-w-2xl italic' style={style}>
-              Fluffy sneakers. Cushy slippers. Ridiculously fluffy pants. Home or away, we’ve got what he needs to chill the most.</div>
+              Giày thể thao siêu bông. Dép mềm êm. Quần bông thật xù. Ở nhà hay ra ngoài, chúng tôi có mọi thứ anh ấy cần để thư giãn.</div>
             <div className={loungingData?.length >= 4 ? `grid md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8` : loungingData?.length === 3 ? `grid md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8` : loungingData?.length === 2 ? `grid md:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-8` : loungingData?.length === 1 ? `grid md:grid-cols-1 lg:grid-cols-1 gap-4 lg:gap-8` : ''}>
               {loungingData?.slice()?.reverse()?.map((Products, index) => {
                 return (
@@ -53,9 +53,9 @@ const ProductList = ({ data, runningData, error, loungingData, everydayData, loa
             <div className='w-full h-[1px] bg-[#957272] mt-12 mb-10'></div>
             <div
               className='text-center text-[1.75rem] font-bold text-black my-2' style={style}
-            >Everyday Shoe {category ? `for ${category}` : ""}</div>
+            >Giày hàng ngày {category ? `cho ${category}` : ""}</div>
             <div className='text-center text-gray-700 mb-7 mt-3 mx-auto text-md font-[400] max-w-2xl italic' style={style}>
-              Fluffy sneakers. Cushy slippers. Ridiculously fluffy pants. Home or away, we’ve got what he needs to chill the most.</div>
+              Giày thể thao siêu bông. Dép mềm êm. Quần bông thật xù. Ở nhà hay ra ngoài, chúng tôi có mọi thứ anh ấy cần để thư giãn.</div>
             <div className={everydayData?.length >= 4 ? `grid md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8` : everydayData?.length === 3 ? `grid md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8` : everydayData?.length === 2 ? `grid md:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-8` : everydayData?.length === 1 ? `grid md:grid-cols-1 lg:grid-cols-1 gap-4 lg:gap-8` : ""}>
               {everydayData?.slice()?.reverse()?.map((Products, index) => {
                 return (
@@ -71,9 +71,9 @@ const ProductList = ({ data, runningData, error, loungingData, everydayData, loa
             <div className='w-full h-[1px] bg-[#957272] mt-12 mb-10'></div>
             <div
               className='text-center text-[1.75rem] font-bold text-black mb-2' style={style}
-            >Running Shoe {category ? `for ${category}` : ""}</div>
+            >Giày chạy bộ {category ? `cho ${category}` : ""}</div>
             <div className='text-center text-gray-700 mb-7 mt-3 mx-auto text-md font-[400] max-w-2xl italic' style={style}>
-              Fluffy sneakers. Cushy slippers. Ridiculously fluffy pants. Home or away, we’ve got what he needs to chill the most.</div>
+              Giày thể thao siêu bông. Dép mềm êm. Quần bông thật xù. Ở nhà hay ra ngoài, chúng tôi có mọi thứ anh ấy cần để thư giãn.</div>
             <div className={runningData?.length >= 4 ? `grid md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8` : runningData?.length === 3 ? `grid md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8` : runningData?.length === 2 ? `grid md:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-8` : runningData?.length === 1 ? `grid md:grid-cols-1 lg:grid-cols-1 gap-4 lg:gap-8` : ""}>
               {runningData?.slice()?.reverse()?.map((Products, index) => {
                 return (

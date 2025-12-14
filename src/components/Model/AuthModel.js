@@ -37,12 +37,12 @@ export default function Auth({
     e.preventDefault();
     if (IsSignup) {
       if (checkbox === false) {
-        return NotifyInfo("Please accept the terms and conditions");
+        return NotifyInfo("Vui lòng chấp nhận điều khoản và điều kiện");
       }
     }
     if (IsSignup) {
       if (authData.password !== authData.confirmPassword) {
-        NotifyInfo("Password and Confirm Password must be same");
+        NotifyInfo("Mật khẩu và xác nhận mật khẩu phải giống nhau");
       }
       return dispatch(
         registeraUser({ authData, navigate, closeModal, closeModalDropDown })
@@ -96,13 +96,13 @@ export default function Auth({
                       className="text-lg font-medium leading-6 text-gray-900 text-center"
                     >
                       {IsSignup
-                        ? "Sign up for an account"
-                        : "Log in to your account"}
+                        ? "Đăng ký tài khoản"
+                        : "Đăng nhập vào tài khoản"}
                     </Dialog.Title>
                     {IsSignup && (
                       <>
                         <div className="w-full md:w-1/2 md:inline-block md:mr-1">
-                          <label htmlFor="firstName">First Name</label>
+                          <label htmlFor="firstName">Họ</label>
                           <div className="mt-1">
                             <input
                               name="firstName"
@@ -113,7 +113,7 @@ export default function Auth({
                         </div>
 
                         <div className="w-full md:w-[48%] md:inline-block">
-                          <label htmlFor="lastName">Last Name</label>
+                          <label htmlFor="lastName">Tên</label>
                           <div className="mt-1">
                             <input
                               onChange={handleChange}
@@ -125,7 +125,7 @@ export default function Auth({
                       </>
                     )}
                     <div>
-                      <label htmlFor="email">Email address</label>
+                      <label htmlFor="email">Email</label>
                       <div className="mt-1">
                         <input
                           onChange={handleChange}
@@ -143,7 +143,7 @@ export default function Auth({
                           : "w-full"
                       }
                     >
-                      <label htmlFor="password">Password</label>
+                      <label htmlFor="password">Mật khẩu</label>
                       <div className="mt-1">
                         <input
                           onChange={handleChange}
@@ -162,7 +162,7 @@ export default function Auth({
                       <>
                         <div className="w-full md:w-[48%] md:inline-block">
                           <label htmlFor="confirmPassword">
-                            Confirm Password
+                            Xác nhận mật khẩu
                           </label>
                           <div className="mt-1">
                             <input
@@ -179,7 +179,7 @@ export default function Auth({
                           </div>
                         </div>
                         <div className="w-full md:w-1/2 md:inline-block md:mr-1">
-                          <label htmlFor="address">Address</label>
+                          <label htmlFor="address">Địa chỉ</label>
                           <div className="mt-1">
                             <input
                               onChange={handleChange}
@@ -189,7 +189,7 @@ export default function Auth({
                           </div>
                         </div>
                         <div className="w-full md:w-[48%] md:inline-block">
-                          <label htmlFor="number">Contact Number</label>
+                          <label htmlFor="number">Số điện thoại</label>
                           <div className="mt-1">
                             <input
                               onChange={handleChange}
@@ -213,13 +213,13 @@ export default function Auth({
                         htmlFor="terms-and-privacy"
                         className="ml-2 block text-sm text-gray-900"
                       >
-                        I agree to the
+                        Tôi đồng ý với
                         <a
                           href="/"
                           className="text-rose-600 hover:text-rose-500"
                         >
                           {" "}
-                          Terms{" "}
+                          Điều khoản {" "}
                         </a>
                         and
                         <a
@@ -227,7 +227,7 @@ export default function Auth({
                           className="text-rose-600 hover:text-rose-500"
                         >
                           {" "}
-                          Privacy Policy{" "}
+                          Chính sách bảo mật{" "}
                         </a>
                         .
                       </label>
@@ -241,20 +241,20 @@ export default function Auth({
                           setIsSignup(!IsSignup);
                         }}
                       >
-                        {IsSignup ? "Sign in instead" : "Create Account"}
+                        {IsSignup ? "Đăng nhập" : "Tạo tài khoản"}
                       </button>
                       <button
                         type="submit"
                         className="w-[48%] inline-block justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#fe2856] hover:bg-[#bc052c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#fe2856]"
                       >
-                        {IsSignup ? "Sign Up" : "Log In"}
+                        {IsSignup ? "Đăng ký" : "Đăng nhập"}
                       </button>
                     </div>
                     <p
                       className="text-center text-sm text-gray-500
                                         first-letter:capitalize"
                     >
-                      click on the overlay to close the popup window
+                      Nhấp vào nền để đóng cửa sổ
                     </p>
                   </form>
                 </Dialog.Panel>

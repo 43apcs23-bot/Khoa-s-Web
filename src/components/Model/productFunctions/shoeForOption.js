@@ -4,7 +4,7 @@ import { NotifyInfo } from "../../../toastify";
 export default function ShoeForOption({ shoeFor, setShoeFor, AddProductData }) {
     const reSetshoeFor = () => {
         setShoeFor({
-            ...AddProductData, shoeFor: ["Lounging", "Everyday", "Running"]
+            ...AddProductData, shoeFor: ["Thư giãn", "Hàng ngày", "Chạy bộ"]
         })
     };
     return (
@@ -51,11 +51,11 @@ export default function ShoeForOption({ shoeFor, setShoeFor, AddProductData }) {
                                 shoeFor: shoeFor.filter((t) => t !== forOption || shoeFor.length === 1),
                             });
                             if (shoeFor.length === 1) {
-                                NotifyInfo("You must have at least one shoeFor option");
+                                NotifyInfo("Bạn phải có ít nhất một tuỳ chọn 'Dành cho'");
                             }
                         }}
                     >
-                        <span className="sr-only">Remove shoeFor</span>
+                        <span className="sr-only">Xóa tuỳ chọn</span>
                         <svg
                             className="h-2 w-2"
                             stroke="currentColor"
@@ -73,7 +73,7 @@ export default function ShoeForOption({ shoeFor, setShoeFor, AddProductData }) {
                 </div>
             ))}
             <button type="button" className=" bg-gray-100 rounded-full px-3 py-1 mb-2 mr-2 text-sm
-                        text-black font-normal" onClick={reSetshoeFor}> Reset </button>
+                        text-black font-normal" onClick={reSetshoeFor}> Đặt lại </button>
         </div>
     );
 }

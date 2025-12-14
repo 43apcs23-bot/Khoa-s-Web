@@ -13,7 +13,7 @@ const Wishlist = () => {
     return (
         <div className='min-h-[600px] mt-10'>
             <Search brandValue={brand} categoryValue={category} priceValue={price} pageValue={page} loading={loading} />
-            <ProductList data={wishListData} loading={loading} error={error} title='WishList' limit={8} />
+            <ProductList data={wishListData} loading={loading} error={error} title='Yêu thích' limit={8} />
         </div>
     );
 };

@@ -3,11 +3,13 @@ import { shoeReducer } from '../slice/ShoeSlice/Shoe'
 import { wishListReducer } from '../slice/WishList'
 import { cartReducer } from '../slice/cartSlice'
 import { filterReducer } from '../slice/filterShoes'
+import { orderReducer } from '../slice/orderSlice'
 export const store = configureStore({
     reducer: {
         shoeDetails: shoeReducer,
         wishList: wishListReducer,
         filterShoes: filterReducer,
-        cart: cartReducer
+        cart: cartReducer,
+        order: orderReducer
     }
 })

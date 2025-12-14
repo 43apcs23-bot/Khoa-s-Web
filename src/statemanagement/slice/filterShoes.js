@@ -31,7 +31,7 @@ export const getAllFilterData = () => async (dispatch, getState) => {
         dispatch(setStatus(Status.IDLE));
     } catch (error) {
         if (error?.response?.status >= 400 && error?.response?.status <= 500) {
-            NotifyWarning(error?.response?.data?.message || 'Something went wrong')
+            NotifyWarning(error?.response?.data?.message || 'Đã có lỗi xảy ra')
             return dispatch(setStatus(Status.FAILED));
         } else {
             NotifyError(error?.message)
@@ -66,13 +66,13 @@ export const filterShoes = createSlice({
             state.page = action.payload;
         },
         setBrandData: (state, action) => {
-            state.brandData = ['All Brands', ...action.payload];
+            state.brandData = ['Tất cả thương hiệu', ...action.payload];
         },
         setCategoryData: (state, action) => {
-            state.categoryData = ['All Categories', ...action.payload];
+            state.categoryData = ['Tất cả danh mục', ...action.payload];
         },
         setPageData: (state, action) => {
-            state.pageData = ["All Pages", ...action.payload];
+            state.pageData = ["Tất cả trang", ...action.payload];
         },
         setStatus: (state, action) => {
             state.status = action.payload;

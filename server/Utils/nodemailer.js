@@ -30,9 +30,9 @@ export const sendEmail = async (email, subject, text) => {
                             text-align: center;">
                     <h1 style="padding: 5px 0px 0px 0px;">${subject}</h1>
                     <p style="padding: 0px 0px 10px 0px;">
-                    Thank you for registering with us. Please click on the link below to verify your email address. Note: This link will expire in 24 hours</p>
-                    <a href=${text} style="color: white; padding: 10px 10px 10px 10px; border:1px solid white; border-radius:16px; cursor: pointer; text-decoration: none;">Verify Account</a>
-                    <p style="padding: 10px 0px 0px 0px;">If you did not register with us, please ignore this email.</p>
+                    Cảm ơn bạn đã đăng ký. Vui lòng nhấn vào nút bên dưới để xác thực email của bạn. Lưu ý: liên kết này sẽ hết hạn sau 24 giờ</p>
+                    <a href=${text} style="color: white; padding: 10px 10px 10px 10px; border:1px solid white; border-radius:16px; cursor: pointer; text-decoration: none;">Xác thực tài khoản</a>
+                    <p style="padding: 10px 0px 0px 0px;">Nếu bạn không đăng ký, hãy bỏ qua email này.</p>
                 <hr style="border-top: 1px solid #fff; border-left: 0px, marginTop:5px">
                 <div class="footer content" style="margin: 0 auto;width: fit-content;">
                     <p
@@ -117,20 +117,20 @@ export const CheckoutEmail = async (subject, user, total, cart, products) => {
             </head>
             <body>
                 <div class="main">
-                    <h1>Order Confirmation</h1>
+                    <h1>Xác nhận đơn hàng</h1>
                     <p>                        
-                        Dear ${user.name}, Thank you for shopping with us. Use your order id ${user._id} to track your order.
+                        Kính gửi ${user.name}, Cảm ơn bạn đã mua sắm tại cửa hàng chúng tôi. Sử dụng mã đơn hàng ${user._id} để theo dõi đơn hàng của bạn.
                     </p>
                     <p>
-                    The total amount of your order is ${total}$.
+                    Tổng số tiền của đơn hàng là ${total}$.
                     </p>
-                    <h2>Order Summary</h2>
+                    <h2>Tóm tắt đơn hàng</h2>
                     <table class="table">
                         <tr class="table-head">
-                            <th class="table-child">Product Name</th>
-                            <th class="table-child">Quantity</th>
-                            <th class="table-child">Price</th>
-                            <th class="table-child">Address</th>    
+                            <th class="table-child">Tên sản phẩm</th>
+                            <th class="table-child">Số lượng</th>
+                            <th class="table-child">Giá</th>
+                            <th class="table-child">Địa chỉ</th>    
                         </tr>
                         <tr class="table-head">
                             <td class="table-child">${products.map((item) => { return `${item.title}`; })}</td>

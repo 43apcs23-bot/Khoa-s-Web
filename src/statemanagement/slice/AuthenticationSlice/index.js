@@ -12,11 +12,11 @@ export const registeraUser = createAsyncThunk('User/registeraUser', async ({ aut
         return;
     } catch (error) {
         if (error?.response?.status >= 300 && error?.response?.status <= 500) {
-            NotifyWarning(error?.response?.data?.message || "Error please  reload page")
-            return rejectWithValue(error?.response?.data?.message || "Error please  reload page");
+            NotifyWarning(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang")
+            return rejectWithValue(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang");
         } else {
-            NotifyError(error.message)
-            return rejectWithValue(error.message)
+            NotifyError(error?.message || 'Đã có lỗi xảy ra')
+            return rejectWithValue(error?.message || 'Đã có lỗi xảy ra')
         }
     }
 }
@@ -38,11 +38,11 @@ export const loginaUser = createAsyncThunk('User/loginaUser', async ({ authData,
         return;
     } catch (error) {
         if (error?.response?.status >= 300 && error?.response?.status <= 500) {
-            NotifyWarning(error?.response?.data?.message || "Error please  reload page")
-            return rejectWithValue(error?.response?.data?.message || "Error please  reload page");
+            NotifyWarning(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang")
+            return rejectWithValue(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang");
         } else {
-            NotifyError(error.message)
-            return rejectWithValue(error.message)
+            NotifyError(error?.message || 'Đã có lỗi xảy ra')
+            return rejectWithValue(error?.message || 'Đã có lỗi xảy ra')
         }
     }
 }
@@ -62,13 +62,13 @@ export const VerifyaUser = createAsyncThunk('User/VerifyUser', async ({ params, 
         return;
     } catch (error) {
         if (error?.response?.status >= 300 && error?.response?.status <= 500) {
-            setMessage(error?.response?.data?.message || "Error please  reload page")
-            NotifyWarning(error?.response?.data?.message || "Error please  reload page")
-            return rejectWithValue(error?.response?.data?.message || "Error please  reload page");
+            setMessage(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang")
+            NotifyWarning(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang")
+            return rejectWithValue(error?.response?.data?.message || "Có lỗi, vui lòng tải lại trang");
         } else {
-            setMessage(error.message)
-            NotifyError(error.message)
-            return rejectWithValue(error.message)
+            setMessage(error?.message || 'Đã có lỗi xảy ra')
+            NotifyError(error?.message || 'Đã có lỗi xảy ra')
+            return rejectWithValue(error?.message || 'Đã có lỗi xảy ra')
         }
     }
 }
