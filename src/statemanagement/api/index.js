@@ -9,6 +9,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 axios.defaults.withCredentials = true;
 const API = axios.create({ baseURL });
+console.info('API baseURL=', baseURL, 'NODE_ENV=', process.env.NODE_ENV);
 API.interceptors.request.use(req => {
     const token = localStorage.getItem('authenticate');
     req.headers.Authorization = `Bearer ${token}`;
