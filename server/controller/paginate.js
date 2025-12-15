@@ -66,6 +66,11 @@ export class APIfeatures {
     if (queryObj.title) {
       finalQuery.title = queryObj.title;
     }
+    // Handle age/gender filter (maps to product `category` array)
+    if (queryObj.age) {
+      finalQuery.category = { $in: [new RegExp(`^${queryObj.age}$`, "i")] };
+      delete queryObj.age;
+    }
     
     this.queryString = finalQuery;
     this.query.find(finalQuery);

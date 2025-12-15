@@ -5,7 +5,7 @@ import AgeDropdown from './AgeDropdown';
 import PriceRangeDropdown from './PriceRangeDropdown';
 import { RiSearch2Line } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
-import { setBrandValue, setPriceValue, setCategoryValue, setSearchName, getAllFilterData } from '../../statemanagement/slice/filterShoes';
+import { setBrandValue, setPriceValue, setCategoryValue, setSearchName, setAgeValue, getAllFilterData } from '../../statemanagement/slice/filterShoes';
 import { NotifySuccess } from '../../toastify';
 
 const Search = ({ brandValue, categoryValue, priceValue }) => {
@@ -16,7 +16,7 @@ const Search = ({ brandValue, categoryValue, priceValue }) => {
     dispatch(getAllFilterData());
   }, [dispatch]);
 
-  const { searchName: searchNameValue } = useSelector((state) => state.filterShoes);
+  const { searchName: searchNameValue, age: ageValue } = useSelector((state) => state.filterShoes);
 
   // Local state (rename to avoid shadowing imported action `setSearchName`)
   const [SearchInput, setSearchInput] = useState(searchNameValue || '');
@@ -30,6 +30,7 @@ const Search = ({ brandValue, categoryValue, priceValue }) => {
   useEffect(() => setPrice(priceValue || 'Khoảng giá (tất cả)'), [priceValue]);
   useEffect(() => setBrand(brandValue || 'Thương hiệu (tất cả)'), [brandValue]);
   useEffect(() => setSearchInput(searchNameValue || ''), [searchNameValue]);
+  useEffect(() => setAge(ageValue || 'Tất cả'), [ageValue]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -67,6 +68,7 @@ const Search = ({ brandValue, categoryValue, priceValue }) => {
       if (typeof setCategoryValue === 'function') dispatch(setCategoryValue(isCategoryDefault ? '' : Category));
       if (typeof setPriceValue === 'function') dispatch(setPriceValue(isPriceDefault ? '' : Price));
       if (typeof setBrandValue === 'function') dispatch(setBrandValue(isBrandDefault ? '' : Brand));
+      if (typeof setAgeValue === 'function') dispatch(setAgeValue(isAgeDefault ? '' : Age));
       if (typeof setSearchName === 'function') dispatch(setSearchName(hasSearchName ? SearchInput.trim() : ''));
     } catch (err) {
       // eslint-disable-next-line no-console

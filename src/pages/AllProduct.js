@@ -7,11 +7,11 @@ import Search from '../components/filterProduct/Search';
 function ProductPage() {
     const dispatch = useDispatch();
     const { shoeData, loading, error, runningData, loungingData, everydayData } = useSelector((state) => state.shoeDetails);
-    const { page, sort, brand, category, price, searchName } = useSelector((state) => state.filterShoes);
+    const { page, sort, brand, category, price, searchName, age } = useSelector((state) => state.filterShoes);
     React.useEffect(() => {
         // On All Products page, fetch a larger limit so ProductList can paginate client-side
-        dispatch(getAllShoe({ page: 1, limit: 100, sort, brand, category, price, searchName }));
-    }, [dispatch, sort, brand, category, price, searchName]);
+        dispatch(getAllShoe({ page: 1, limit: 100, sort, brand, category, price, searchName, age }));
+    }, [dispatch, sort, brand, category, price, searchName, age]);
     const style = {
         textAlign: 'left',
         marginLeft: '10px',

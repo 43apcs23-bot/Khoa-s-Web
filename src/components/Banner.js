@@ -1,21 +1,27 @@
 import React from 'react';
 import Image from '../assets/homepage.svg';
-import { setCategoryValue } from '../statemanagement/slice/filterShoes';
+import { setAgeValue, setCategoryValue, setSearchName } from '../statemanagement/slice/filterShoes';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 const Banner = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const ShoeForMen = () => {
-    dispatch(setCategoryValue('Nam'));
+    dispatch(setAgeValue('Nam'));
+    dispatch(setCategoryValue(''));
+    dispatch(setSearchName(''));
     navigate('/products');
   };
   const ShoeForWomen = () => {
-    dispatch(setCategoryValue('Nữ'));
+    dispatch(setAgeValue('Nữ'));
+    dispatch(setCategoryValue(''));
+    dispatch(setSearchName(''));
     navigate('/products');
   };
   const ShoeForKids = () => {
-    dispatch(setCategoryValue('Trẻ em'));
+    dispatch(setAgeValue('Trẻ em'));
+    dispatch(setCategoryValue(''));
+    dispatch(setSearchName(''));
     navigate('/products');
   };
   return (

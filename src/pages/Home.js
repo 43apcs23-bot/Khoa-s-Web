@@ -9,11 +9,11 @@ import Search from '../components/filterProduct/Search';
 const Home = () => {
   const dispatch = useDispatch();
   const { shoeData, loading, error } = useSelector((state) => state.shoeDetails);
-  const { page, sort, brand, category, price, searchName } = useSelector((state) => state.filterShoes);
+  const { page, sort, brand, category, price, searchName, age } = useSelector((state) => state.filterShoes);
   React.useEffect(() => {
     // fetch a larger set for home preview so client-side pagination can work
-    dispatch(getAllShoe({ page: 1, limit: 100, sort, brand, category, price, searchName }));
-  }, [dispatch, sort, brand, category, price, searchName]);
+    dispatch(getAllShoe({ page: 1, limit: 100, sort, brand, category, price, searchName, age }));
+  }, [dispatch, sort, brand, category, price, searchName, age]);
   return (
     <div className='min-h-[1400px]'>
       <Banner />

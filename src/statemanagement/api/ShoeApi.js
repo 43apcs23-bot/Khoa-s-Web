@@ -1,6 +1,6 @@
 import API from "./index";
 
-export const GetAllShoeAPI = ({ page, limit, sort, brand, category, price, searchName }) => API.get("/shoesPage", {
+export const GetAllShoeAPI = ({ page, limit, sort, brand, category, price, searchName, age }) => API.get("/shoesPage", {
     params: {
         page,
         limit,
@@ -8,7 +8,8 @@ export const GetAllShoeAPI = ({ page, limit, sort, brand, category, price, searc
         brand,
         category,
         price,
-        searchName
+        searchName,
+        age
     }
 });
 export const GetTopShoeAPI = () => API.get("/shoesPage/top");

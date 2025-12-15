@@ -14,6 +14,7 @@ const initialState = {
     sort: 'createdAt',
     brand: '',
     category: '',
+    age: '',
     price: '',
     searchName: '',
     brandData: [],
@@ -60,6 +61,9 @@ export const filterShoes = createSlice({
         setCategoryValue: (state, action) => {
             state.category = action.payload;
         },
+        setAgeValue: (state, action) => {
+            state.age = action.payload;
+        },
         setPriceValue: (state, action) => {
             state.price = action.payload;
         },
@@ -86,5 +90,5 @@ export const filterShoes = createSlice({
     },
 });
 
-export const { setPage, setLimit, setSort, setBrandValue, setCategoryValue, setPriceValue, setSearchName, setBrandData, setCategoryData, setPageData, setPageValue, setStatus } = filterShoes.actions;
+export const { setPage, setLimit, setSort, setBrandValue, setCategoryValue, setAgeValue, setPriceValue, setSearchName, setBrandData, setCategoryData, setPageData, setPageValue, setStatus } = filterShoes.actions;
 export const filterReducer = filterShoes.reducer;
