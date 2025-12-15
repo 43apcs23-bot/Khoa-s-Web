@@ -10,6 +10,8 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
+// sanitize CLIENT_URL so quotes or accidental spaces in `server/.env` don't break CORS checks
+const CLIENT_URL = (process.env.CLIENT_URL || '').replace(/^['"]|['"]$/g, '').trim();
 
 const app = express();
 app.use(cookieParser());
@@ -40,7 +42,7 @@ app.use(cors({
     // Localhost dev
     if (origin.startsWith('http://localhost')) return callback(null, true);
     // Production domain
-    if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) return callback(null, true);
+    if (CLIENT_URL && origin === CLIENT_URL) return callback(null, true);
     // Netlify preview subdomains: *.--your-site-name.netlify.app
     if (/--.*--footgearh\.netlify\.app$/.test(origin)) return callback(null, true);
 
