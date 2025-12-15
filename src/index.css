@@ -99,3 +99,13 @@
   transform: scale(1.2);
 }
 /* slider style */
+
+/* product list transition */
+.fade-in {
+  animation: fadeIn 320ms ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* product list transition */

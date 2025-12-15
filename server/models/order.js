@@ -30,7 +30,7 @@ const orderSchema = new Schema(
     /* ================= PAYMENT ================= */
     paymentMethod: {
       type: String,
-      enum: ["COD", "MOMO", "BANK", "CARD"],
+      enum: ["COD", "MOMO", "BANK", "CARD", "ONLINE", "OFFLINE"],
       required: true,
     },
 
@@ -44,17 +44,47 @@ const orderSchema = new Schema(
       type: String, // MoMo / Bank transaction id
     },
 
+    // deposit/demo fields (optional)
+    depositAmount: {
+      type: Number,
+    },
+    depositRequired: {
+      type: Boolean,
+      default: false,
+    },
+
     shippingStatus: {
       type: String,
       enum: [
-        "PENDING",
-        "CONFIRMED",
-        "SHIPPING",
-        "DELIVERED",
-        "CANCELLED",
-        "RETURNED",
+        "Chờ xác nhận",
+        "Đang xử lý",
+        "Đang vận chuyển",
+        "Giao hàng thành công",
+        "Đã hủy",
+        "Hoàn thành",
       ],
-      default: "PENDING",
+      default: "Chờ xác nhận",
+    },
+
+    // cancellation info
+    cancelReason: {
+      type: String,
+    },
+    cancelledBy: {
+      type: Schema.Types.ObjectId,
+      ref: "UserDetails",
+    },
+    cancelledAt: {
+      type: Date,
+    },
+
+    // completion info
+    completedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "UserDetails",
+    },
+    completedAt: {
+      type: Date,
     },
 
     shippingFee: {
@@ -73,6 +103,9 @@ const orderSchema = new Schema(
     timestamps: true,
   }
 );
+
+// Index to optimize queries for user orders sorted by newest
+orderSchema.index({ userId: 1, _id: -1 });
 
 const Order = mongoose.model("Order", orderSchema);
 export default Order;

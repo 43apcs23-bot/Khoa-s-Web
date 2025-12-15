@@ -15,6 +15,7 @@ export const initialState = {
     cartData: [],
     status: Status.IDLE,
     isOpenCart: false,
+    selectedCartIds: [],
 }
 
 export const getCarts = () => async (dispatch) => {
@@ -33,10 +34,10 @@ export const getCarts = () => async (dispatch) => {
     }
 }
 
-export const addCarts = ({ product, shoeId, notification }) => async (dispatch) => {
+export const addCarts = ({ product, shoeId, quantity = 1, notification }) => async (dispatch) => {
     dispatch(setStatus(Status.LOADING));
     try {
-        const { data: { data, token, message } } = await api.AddCartAPI(shoeId);
+        const { data: { data, token, message } } = await api.AddCartAPI(shoeId, { quantity });
         localStorage.setItem('authenticate', token)
         dispatch(addCartData(product));
         dispatch(addCartIds(data));
@@ -106,7 +107,8 @@ export const checkoutAct = (payload) => async (dispatch) => {
     try {
         const { data: { message, token, data } } = await api.checkoutAPI(payload);
         localStorage.setItem('authenticate', token)
-        dispatch(checkoutCart());
+        // refresh cart data from server to reflect partial/full checkout
+        dispatch(getCarts());
         NotifySuccess(message || 'Thanh toán thành công');
         dispatch(setStatus(Status.IDLE));
         return data; // return saved order to caller
@@ -132,7 +134,13 @@ const cartSlice = createSlice({
             state.cartData = action.payload;
         },
         addCartData: (state, action) => {
-            state.cartData = [...state.cartData, action.payload];
+            const idx = state.cartData.findIndex(p => p._id === action.payload._id);
+            if (idx >= 0) {
+                // replace existing product with the newest one
+                state.cartData[idx] = action.payload;
+            } else {
+                state.cartData.push(action.payload);
+            }
         },
         addCartIds: (state, action) => {
             state.cartIds = action.payload
@@ -144,11 +152,25 @@ const cartSlice = createSlice({
             state.cartData = [];
             state.cartIds = [];
         },
+        toggleSelect: (state, action) => {
+            const id = action.payload;
+            if (state.selectedCartIds.includes(id)) {
+                state.selectedCartIds = state.selectedCartIds.filter(i => i !== id);
+            } else {
+                state.selectedCartIds.push(id);
+            }
+        },
+        selectAll: (state) => {
+            state.selectedCartIds = state.cartIds.map(ci => ci.cartId);
+        },
+        clearSelection: (state) => {
+            state.selectedCartIds = [];
+        },
         isOpenCart: (state, action) => {
             state.isOpenCart = action.payload;
         },
     },
 });
 
-export const { setStatus, addCartData, addCartIds, getAllCartData, deleteCartData, checkoutCart, isOpenCart } = cartSlice.actions;
+export const { setStatus, addCartData, addCartIds, getAllCartData, deleteCartData, checkoutCart, toggleSelect, selectAll, clearSelection, isOpenCart } = cartSlice.actions;
 export const cartReducer = cartSlice.reducer;

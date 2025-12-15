@@ -14,7 +14,7 @@ export default function AddProduct() {
         description: '',
         price: '',
         category: ["Nam", "Nữ", "Trẻ em"],
-        shoeFor: ["Thư giãn", "Hàng ngày", "Chạy bộ"],
+        shoeFor: '',
         quantity: '',
         selectedFile: [],
         brand: '',
@@ -27,7 +27,9 @@ export default function AddProduct() {
     }
     const handleSubmit = (e) => {
         e.preventDefault()
-        dispatch(createShoe({ AddProductData, closeModal }))
+        // ensure shoeFor is sent as array of one item
+        const payload = { ...AddProductData, shoeFor: AddProductData.shoeFor ? [AddProductData.shoeFor] : [] }
+        dispatch(createShoe({ AddProductData: payload, closeModal }))
     };
     const handleChange = (e) => {
         setAddProductData({ ...AddProductData, [e.target.name]: e.target.value });
@@ -73,7 +75,7 @@ export default function AddProduct() {
                                             as="h3"
                                             className="text-lg font-medium -m-2 text-gray-900 text-center"
                                         >
-                                            Thêm giày mới
+                                            Thêm sản phẩm mới
                                         </Dialog.Title>
                                         <div>
                                             <label htmlFor="title">Tiêu đề</label>

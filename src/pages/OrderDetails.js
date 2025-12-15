@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { GetOrderByIdAPI } from '../statemanagement/api/orderApi'
+import { GetOrderByIdAPI, CancelOrderAPI, CompleteOrderAPI, AdvanceOrderAPI, RequestCancelOrderAPI } from '../statemanagement/api/orderApi'
+import { NotifySuccess, NotifyError } from '../toastify'
+import { decodeToken } from 'react-jwt'
+import { useDispatch } from 'react-redux'
+import { getMyOrders } from '../statemanagement/slice/orderSlice'
 
 const formatCurrency = (value) => {
   try {
@@ -13,24 +17,81 @@ export default function OrderDetails() {
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [showCancel, setShowCancel] = useState(false)
+  const [cancelReason, setCancelReason] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const dispatch = useDispatch()
+  const token = localStorage.getItem('authenticate')
+  const me = token ? decodeToken(token) : null
+  const fetchOrder = useCallback(async () => {
+    setLoading(true)
+    try {
+      const { data } = await GetOrderByIdAPI(id)
+      setOrder(data.data)
+    } catch (err) {
+      setError(err?.response?.data?.message || err.message || 'Đã có lỗi xảy ra')
+    } finally {
+      setLoading(false)
+    }
+  }, [id])
 
   useEffect(() => {
-    let mounted = true
-    async function fetchOrder() {
-      setLoading(true)
-      try {
-        const { data } = await GetOrderByIdAPI(id)
-        if (!mounted) return
-        setOrder(data.data)
-      } catch (err) {
-        setError(err?.response?.data?.message || err.message || 'Đã có lỗi xảy ra')
-      } finally {
-        setLoading(false)
-      }
-    }
     fetchOrder()
-    return () => { mounted = false }
-  }, [id])
+  }, [fetchOrder])
+
+  async function handleCancelSubmit() {
+    if (!cancelReason || cancelReason.trim().length === 0) {
+      return NotifyError('Vui lòng nhập lý do hủy')
+    }
+    setSubmitting(true)
+    try {
+      let data
+      if (me?.role === true) {
+        const res = await CancelOrderAPI(id, { reason: cancelReason })
+        data = res.data
+      } else {
+        const res = await RequestCancelOrderAPI(id, { reason: cancelReason })
+        data = res.data
+      }
+      NotifySuccess(data.message || 'Đã hủy đơn')
+      await fetchOrder()
+      dispatch(getMyOrders({ limit: 6 }))
+      setShowCancel(false)
+      setCancelReason('')
+    } catch (err) {
+      NotifyError(err?.response?.data?.message || err.message || 'Đã có lỗi xảy ra')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  async function handleComplete() {
+    setSubmitting(true)
+    try {
+      const { data } = await CompleteOrderAPI(id)
+      NotifySuccess(data.message || 'Đã hoàn thành đơn')
+      await fetchOrder()
+      dispatch(getMyOrders({ limit: 6 }))
+    } catch (err) {
+      NotifyError(err?.response?.data?.message || err.message || 'Đã có lỗi xảy ra')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  async function handleAdvance() {
+    setSubmitting(true)
+    try {
+      const { data } = await AdvanceOrderAPI(id)
+      NotifySuccess(data.message || 'Đã chuyển trạng thái')
+      await fetchOrder()
+      dispatch(getMyOrders({ limit: 6 }))
+    } catch (err) {
+      NotifyError(err?.response?.data?.message || err.message || 'Đã có lỗi xảy ra')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   if (loading) return <div className="container mx-auto p-4">Đang tải...</div>
   if (error) return <div className="container mx-auto p-4 text-red-500">{error}</div>
@@ -50,6 +111,24 @@ export default function OrderDetails() {
             <div className="text-sm text-gray-500">Tổng</div>
             <div className="text-2xl font-bold text-rose-600">{formatCurrency(order.totalAmount)}</div>
           </div>
+        </div>
+
+        <div className='mt-4 flex gap-3'>
+          {(me?.role === true) && (
+            <>
+              <button onClick={() => { if (order.shippingStatus !== 'Đã hủy') setShowCancel(true) }} disabled={order.shippingStatus === 'Đã hủy'} className={`px-4 py-2 ${order.shippingStatus === 'Đã hủy' ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-red-600 text-white'} rounded`}>{order.shippingStatus === 'Đã hủy' ? 'Đã hủy' : 'Hủy đơn (Admin)'}</button>
+              {/* admin advance when possible */}
+              {['Chờ xác nhận','Đang xử lý','Đang vận chuyển'].includes(order.shippingStatus) && (
+                <button onClick={handleAdvance} disabled={submitting} className='px-4 py-2 bg-blue-600 text-white rounded ml-2'>{submitting ? 'Đang...' : 'Tiếp'}</button>
+              )}
+            </>
+          )}
+          {(order.userId?._id === me?._id && order.shippingStatus === 'Chờ xác nhận') && (
+            <button disabled title='Yêu cầu hủy phải do admin thực hiện' className='px-4 py-2 bg-gray-400 text-white rounded'>Hủy đơn (chờ admin)</button>
+          )}
+          {(order.userId?._id === me?._id && order.shippingStatus === 'Giao hàng thành công') && (
+            <button onClick={handleComplete} disabled={submitting} className='px-4 py-2 bg-green-600 text-white rounded'>{submitting ? 'Đang...' : 'Hoàn thành'}</button>
+          )}
         </div>
 
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -84,9 +163,30 @@ export default function OrderDetails() {
             <h3 className="font-semibold mt-4 mb-2">Thanh toán</h3>
             <div className="text-sm">Phương thức: {order.paymentMethod || '—'}</div>
             <div className="text-sm mt-2">Trạng thái thanh toán: {order.paymentStatus || '—'}</div>
+            {order.shippingStatus === 'Đã hủy' && order.cancelReason && (
+              <div className='mt-3 p-3 bg-red-50 rounded'>
+                <div className='font-medium'>Lý do hủy:</div>
+                <div className='text-sm text-gray-700'>{order.cancelReason}</div>
+                {order.cancelledBy && <div className='text-xs text-gray-500 mt-2'>Hủy bởi: {order.cancelledBy.name}</div>}
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Cancel modal */}
+      {showCancel && (
+        <div className='fixed inset-0 bg-black/40 flex items-center justify-center'>
+          <div className='bg-white rounded p-6 w-full max-w-md'>
+            <h3 className='text-lg font-semibold mb-2'>Lý do hủy đơn</h3>
+            <textarea value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} className='w-full border rounded p-2 h-24' placeholder='Nhập lý do hủy...' />
+            <div className='mt-4 flex justify-end gap-3'>
+              <button onClick={() => { setShowCancel(false); setCancelReason('') }} className='px-4 py-2 rounded border'>Huỷ</button>
+              <button onClick={handleCancelSubmit} disabled={submitting} className='px-4 py-2 rounded bg-red-600 text-white'>{submitting ? 'Đang...' : 'Gửi và hủy'}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

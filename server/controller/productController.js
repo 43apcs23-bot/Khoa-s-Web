@@ -104,7 +104,7 @@ export const createproductPage = async (req, res) => {
 
     if (!shoeFor) {
       return res.status(400).json({
-        message: "Vui lòng chọn mục đích sử dụng giày",
+        message: "Vui lòng chọn mục đích sử dụng sản phẩm",
       });
     }
 
@@ -186,7 +186,7 @@ export const updateProductById = async (req, res) => {
 
     if (!shoeFor) {
       return res.status(400).json({
-        message: "Vui lòng chọn mục đích sử dụng giày",
+        message: "Vui lòng chọn mục đích sử dụng sản phẩm",
       });
     }
 
@@ -240,47 +240,46 @@ export const getProductById = async (req, res) => {
 };
 
 /* ===================== FILTER PRODUCT ===================== */
+/* ===================== FILTER PRODUCT ===================== */
 export const getfilterProduct = async (req, res) => {
   try {
-    const data = await productModel.find({}).select("brand category");
-    const pages = await productModel.find().countDocuments();
+    // Lấy tất cả product cần filter
+    const data = await productModel.find({}).select("brand category shoeFor price");
+
+    // Pagination
+    const totalDocs = await productModel.countDocuments();
     const limit = 8;
-    const totalPages = Math.ceil(pages / limit);
+    const totalPages = Math.ceil(totalDocs / limit);
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-    const pageArray = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageArray.push(i);
-    }
+    // Lấy dữ liệu dropdown
+    const allBrand = data.map(item => item.brand).filter(Boolean);
+    const allCategory = data.map(item => item.shoeFor).flat().filter(Boolean);
+    const allAge = data.map(item => item.category).flat().filter(Boolean);
 
-    const brand = data.map((item) => item.brand);
-    const category = data.map((item) => item.category);
+    // Capitalize và unique
+    const uniqueBrand = [...new Set(allBrand.map(b => b.charAt(0).toUpperCase() + b.slice(1)))];
+    const uniqueCategory = [...new Set(allCategory.map(c => c.charAt(0).toUpperCase() + c.slice(1)))];
+    const uniqueAge = [...new Set(allAge.map(a => a.charAt(0).toUpperCase() + a.slice(1)))];
 
-    const allBrand = brand.reduce((acc, val) => acc.concat(val), []);
-    const allCategory = category.reduce((acc, val) => acc.concat(val), []);
+    // Price ranges (hardcode tạm)
+    const priceRanges = ["Tất cả", "0-100", "101-500", "501-1000", "1001+"];
 
-    const brandFilter = allBrand.filter(Boolean);
-    const categoryFilter = allCategory.filter(Boolean);
-
-    const brandCapitalize = brandFilter.map(
-      (item) => item.charAt(0).toUpperCase() + item.slice(1)
-    );
-    const categoryCapitalize = categoryFilter.map(
-      (item) => item.charAt(0).toUpperCase() + item.slice(1)
-    );
-
-    const uniqueBrand = [...new Set(brandCapitalize)];
-    const uniqueCategory = [...new Set(categoryCapitalize)];
-
+    // Trả về JSON
     res.json({
       data: {
-        brand: uniqueBrand,
-        category: uniqueCategory,
-        pageNumbers: pageArray,
-      },
+        brand: uniqueBrand,      // BrandDropdown
+        category: uniqueCategory, // ProductDropdown (shoeFor)
+        age: uniqueAge,          // AgeDropdown (Nam/Nữ/Trẻ em)
+        priceRanges,             // PriceRangeDropdown
+        pageNumbers
+      }
     });
+
   } catch (error) {
-    res.status(404).json({
+    res.status(500).json({
       message: "Không thể lấy dữ liệu bộ lọc sản phẩm",
+      error: error.message
     });
   }
 };

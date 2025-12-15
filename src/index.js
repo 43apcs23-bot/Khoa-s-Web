@@ -14,7 +14,7 @@ root.render(
     <React.StrictMode>
       <Provider store={store}>
         <App />
-        <ToastContainer />
+        <ToastContainer position="top-left" />
       </Provider>
     </React.StrictMode>
   </Router>

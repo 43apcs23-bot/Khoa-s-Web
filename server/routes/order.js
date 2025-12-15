@@ -4,7 +4,11 @@ import {
   getMyOrders,
   getOrderById,
   getAllOrders,
-  updateOrderStatus
+  updateOrderStatus,
+  cancelOrder,
+  userCancelOrder,
+  userCompleteOrder,
+  advanceOrder
 } from "../controller/order.js";
 
 import { auth, checkAdmin } from "../middleware/auth.js";
@@ -30,5 +34,13 @@ router.get("/", auth, checkAdmin, getAllOrders);
 
 // cập nhật trạng thái đơn
 router.patch("/:id/status", auth, checkAdmin, updateOrderStatus);
+
+// cancel (admin-only)
+router.post("/:id/cancel", auth, checkAdmin, cancelOrder);
+// user cancel request (owner only, allowed when status is 'Chờ xác nhận')
+router.post("/:id/cancel-request", auth, userCancelOrder);
+router.post("/:id/complete", auth, userCompleteOrder);
+// admin advance
+router.post("/:id/advance", auth, checkAdmin, advanceOrder);
 
 export default router;

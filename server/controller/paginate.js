@@ -9,6 +9,8 @@ export class APIfeatures {
   }
   filtering() {
     const queryObj = { ...this.queryString };
+    
+    // Handle price filter
     if (queryObj.price) {
       queryObj.price = queryObj.price.split(" - ");
       queryObj.price = {
@@ -16,56 +18,58 @@ export class APIfeatures {
         $lte: parseInt(queryObj.price[1]),
       };
     }
+    
+    // Handle brand filter (case-insensitive regex)
     if (queryObj.brand) {
       queryObj.brand = {
         $regex: queryObj.brand,
         $options: "i",
       };
     }
+    
+    // Handle category filter (frontend 'category' param actually refers to shoeFor values)
+    // The API returns 'category' data as the distinct `shoeFor` values (e.g., Running, Lounging)
+    // Map the incoming category query to filter against the `shoeFor` array field.
+    if (queryObj.category) {
+      queryObj.shoeFor = {
+        $in: [
+          new RegExp(`^${queryObj.category}$`, "i")
+        ]
+      };
+      delete queryObj.category; // remove original to avoid confusion
+    }
+    
+    // Handle searchName filter (search by product title - case-insensitive regex)
+    if (queryObj.searchName) {
+      queryObj.title = {
+        $regex: queryObj.searchName,
+        $options: "i",
+      };
+      delete queryObj.searchName; // Remove searchName, we use title instead
+    }
+    
+    // Remove pagination and sorting fields from query
     const excludedFields = ["page", "sort", "limit"];
     excludedFields.forEach((el) => delete queryObj[el]);
-    if (queryObj.brand && queryObj.category && queryObj.price) {
-      this.query.find(queryObj);
-      this.queryString = queryObj;
-      return this;
-    } else if (!queryObj.brand && queryObj.category && queryObj.price) {
-      delete queryObj.brand;
-      this.queryString = queryObj;
-      this.query.find(queryObj);
-      return this;
-    } else if (queryObj.brand && !queryObj.category && queryObj.price) {
-      delete queryObj.category;
-      this.queryString = queryObj;
-      this.query.find(queryObj);
-      return this;
-    } else if (queryObj.brand && queryObj.category && !queryObj.price) {
-      delete queryObj.price;
-      this.queryString = queryObj;
-      this.query.find(queryObj);
-      return this;
-    } else if (!queryObj.brand && !queryObj.category && queryObj.price) {
-      delete queryObj.brand;
-      delete queryObj.category;
-      this.queryString = queryObj;
-      this.query.find(queryObj);
-      return this;
-    } else if (!queryObj.brand && queryObj.category && !queryObj.price) {
-      delete queryObj.brand;
-      delete queryObj.price;
-      this.queryString = queryObj;
-      this.query.find(queryObj);
-      return this;
-    } else if (queryObj.brand && !queryObj.category && !queryObj.price) {
-      delete queryObj.category;
-      delete queryObj.price;
-      this.queryString = queryObj;
-      this.query.find(queryObj);
-      return this;
-    } else {
-      this.queryString = {};
-      this.query.find();
-      return this;
+    
+    // Build the final query - only include filters that are actually set
+    const finalQuery = {};
+    if (queryObj.price) {
+      finalQuery.price = queryObj.price;
     }
+    if (queryObj.brand) {
+      finalQuery.brand = queryObj.brand;
+    }
+    if (queryObj.shoeFor) {
+      finalQuery.shoeFor = queryObj.shoeFor;
+    }
+    if (queryObj.title) {
+      finalQuery.title = queryObj.title;
+    }
+    
+    this.queryString = finalQuery;
+    this.query.find(finalQuery);
+    return this;
   }
   sorting() {
     if (this.queryString.sort) {

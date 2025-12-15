@@ -7,6 +7,6 @@ router.get("/", getproductPage);
 router.get("/top", getTopProducts);
 router.get("/filter", getfilterProduct);
 router.post("/", checkAdmin, createproductPage);
-router.patch('/:id', updateProductById)
+router.patch('/:id', checkAdmin, updateProductById)
 router.get('/:id', getProductById)
 export default router;

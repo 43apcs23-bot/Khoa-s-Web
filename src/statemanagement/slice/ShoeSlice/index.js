@@ -11,9 +11,9 @@ export const initialState = {
     topShoeData: [],
     loading: false
 }
-export const getAllShoe = createAsyncThunk('Shoe/getAllShoe', async ({ page, limit, sort, brand, category, price }, { rejectWithValue }) => {
+export const getAllShoe = createAsyncThunk('Shoe/getAllShoe', async ({ page, limit, sort, brand, category, price, searchName }, { rejectWithValue }) => {
     try {
-        const { data: { data, runnning, lounging, everyday } } = await api.GetAllShoeAPI({ page, limit, sort, brand, category, price });
+        const { data: { data, runnning, lounging, everyday } } = await api.GetAllShoeAPI({ page, limit, sort, brand, category, price, searchName });
         return { data, runnning, lounging, everyday };
     } catch (error) {
         if (error?.response?.status >= 400 && error?.response?.status <= 500) {

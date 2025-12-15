@@ -13,7 +13,7 @@ export const sendEmail = async (email, subject, text) => {
             },
         });
         await transporter.sendMail({
-            from: process.env.USER,
+            from: `${process.env.USER_NAME || 'FootGear H'} <${process.env.USER}>`,
             to: email,
             subject: subject,
             text: text,
@@ -37,11 +37,11 @@ export const sendEmail = async (email, subject, text) => {
                 <div class="footer content" style="margin: 0 auto;width: fit-content;">
                     <p
                         style="margin-left: auto;margin-right: auto;color: white;font-size: small;">
-                        Shoe Store, Your dream footwear store. Powerful, self-serve product and growth analytics to help you convert, engage, and retain more.</p>
+                        FootGear H — cửa hàng đồ thể thao, quần áo và phụ kiện. Chúng tôi cung cấp sản phẩm chất lượng giúp bạn tự tin hơn trong mọi hoạt động.</p>
                         <p style="margin-left: auto;margin-right: auto; padding: 0px 0px 10px 0px;color: white;font-size: small;">Explore our collection of shoes, sandals, boots, sneakers, and more.</p>
-                        <p><a href=${process.env.BASE_URL} style="color: white; padding: 10px 10px 10px 10px; border:1px solid white; border-radius:16px; cursor: pointer; text-decoration: none;"> Shoes Store For You</a></p>
+                        <p><a href=${process.env.BASE_URL} style="color: white; padding: 10px 10px 10px 10px; border:1px solid white; border-radius:16px; cursor: pointer; text-decoration: none;"> Visit FootGear H</a></p>
                 </div>
-                <p style="padding: 10px 0px 10px 0px"> &copy; 2022 Shoe Store. All rights reserved.</p>
+                <p style="padding: 10px 0px 10px 0px"> &copy; 2022 FootGear H. All rights reserved.</p>
             </div>
             </body>
             </html>`,
@@ -65,7 +65,7 @@ export const CheckoutEmail = async (subject, user, total, cart, products) => {
             },
         });
         await transporter.sendMail({
-            from: process.env.USER,
+            from: `${process.env.USER_NAME || 'FootGear H'} <${process.env.USER}>`,
             to: user.email,
             subject: subject,
             text: "Thank you for shopping with us",
@@ -147,11 +147,11 @@ export const CheckoutEmail = async (subject, user, total, cart, products) => {
                 <hr style="border-top: 1px solid #fff; border-left: 0px, marginTop:5px" />
                 <div class="footer content" style="margin: 0 auto;width: fit-content;">
                     <p style="margin-left: auto;margin-right: auto;color: white;font-size: small;">
-                        Shoe Store, Your dream footwear store. Powerful, self-serve product and growth analytics to help you convert, engage, and retain more.</p>
+                        FootGear H — cửa hàng đồ thể thao, quần áo và phụ kiện. Chúng tôi cung cấp sản phẩm chất lượng giúp bạn tự tin hơn trong mọi hoạt động.</p>
                     <p style="margin-left: auto;margin-right: auto; padding: 0px 0px 10px 0px;color: white;font-size: small;">Explore our collection of shoes, sandals, boots, sneakers, and more.</p>
-                    <p><a href=${process.env.BASE_URL} style="color: white; padding: 10px 20px 10px 20px; border:1px solid white; border-radius:16px; cursor: pointer; text-decoration: none;"> Shoes Store For You</a></p>
+                    <p><a href=${process.env.BASE_URL} style="color: white; padding: 10px 20px 10px 20px; border:1px solid white; border-radius:16px; cursor: pointer; text-decoration: none;"> Visit FootGear H</a></p>
                 </div>
-                <p style="padding: 10px 0px 10px 0px"> &copy; 2022 Shoe Store. All rights reserved.</p>
+                <p style="padding: 10px 0px 10px 0px"> &copy; 2022 FootGear H. All rights reserved.</p>
             </div>
             </body>
             </html>`,

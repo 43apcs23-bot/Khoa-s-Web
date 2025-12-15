@@ -8,14 +8,14 @@ const Footer = () => {
         {/* Logo + Copyright */}
         <div className="flex flex-col">
           <div className="font-medium text-lg">
-            <span className="text-rose-500 text-2xl">Shoe</span> store
+            <span className="text-rose-500 text-2xl">FootGear</span> H
           </div>
 
           <p className="text-sm text-gray-800 mt-4">
-            Copyright © {new Date().getFullYear()} Shoe Store.
+            FootGear H — đồ thể thao, quần áo và phụ kiện chất lượng.
           </p>
           <p className="text-sm text-gray-800 mt-2">
-            Đã đăng ký bản quyền
+            Copyright © {new Date().getFullYear()} FootGear H.
           </p>
 
           {/* Social icons (PLACEHOLDER) */}
@@ -45,17 +45,17 @@ const Footer = () => {
         {/* Hỗ trợ */}
         <div className="hidden md:block">
           <h2 className="text-base font-semibold text-gray-800">Hỗ trợ</h2>
-          <FooterItem text="Điều khoản pháp lý" />
-          <FooterItem text="Chính sách" />
+          <FooterItem text="Điều khoản" />
+          <FooterItem text="Chính sách hoàn trả" />
           <FooterItem text="Chính sách bảo mật" />
         </div>
 
         {/* Liên hệ */}
         <div>
           <h2 className="text-base font-semibold text-gray-800">Liên hệ</h2>
-          <FooterItem text="Shoes Nepal" />
+          <FooterItem text="Email: support@footgearh.com" />
           <FooterItem text="Vị trí cửa hàng" />
-          <FooterItem text="Thông tin liên hệ" />
+          <FooterItem text="Số điện thoại: +84 123 456 789" />
         </div>
       </div>
     </div>

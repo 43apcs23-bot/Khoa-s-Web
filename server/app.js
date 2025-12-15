@@ -27,13 +27,24 @@ if (missing.length) {
 }
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
-app.use(cors(
-  {
-    origin: "http://localhost:3000",
-    credentials: true,
-    exposedHeaders: ["set-cookie"],
-  }
-));
+// CORS: allow localhost dev origins (3000/3001/3002) and allow server-to-server requests
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow non-browser requests (e.g., curl, server-side)
+    if (!origin) return callback(null, true);
+
+    // Allow any localhost origin (useful for dev on different ports)
+    if (origin.startsWith('http://localhost')) return callback(null, true);
+
+    // Optionally restrict to a configured client URL
+    if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) return callback(null, true);
+
+    // Otherwise reject
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  exposedHeaders: ["set-cookie"],
+}));
 app.use(morgan("dev"));
 app.use("/user", userRoutes);
 app.use("/shoesPage", shoesPageRoutes);

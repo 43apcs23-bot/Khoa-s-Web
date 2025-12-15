@@ -15,6 +15,7 @@ const initialState = {
     brand: '',
     category: '',
     price: '',
+    searchName: '',
     brandData: [],
     categoryData: [],
     pageData: [],
@@ -62,6 +63,9 @@ export const filterShoes = createSlice({
         setPriceValue: (state, action) => {
             state.price = action.payload;
         },
+        setSearchName: (state, action) => {
+            state.searchName = action.payload;
+        },
         setPageValue: (state, action) => {
             state.page = action.payload;
         },
@@ -69,7 +73,9 @@ export const filterShoes = createSlice({
             state.brandData = ['Tất cả thương hiệu', ...action.payload];
         },
         setCategoryData: (state, action) => {
-            state.categoryData = ['Tất cả danh mục', ...action.payload];
+            // Category filter options are provided by the server (shoeFor values)
+            // Prepend a default option that matches the Search component default label
+            state.categoryData = ['Danh mục (tất cả)', ...action.payload];
         },
         setPageData: (state, action) => {
             state.pageData = ["Tất cả trang", ...action.payload];
@@ -80,5 +86,5 @@ export const filterShoes = createSlice({
     },
 });
 
-export const { setPage, setLimit, setSort, setBrandValue, setCategoryValue, setPriceValue, setBrandData, setCategoryData, setPageData, setPageValue, setStatus } = filterShoes.actions;
+export const { setPage, setLimit, setSort, setBrandValue, setCategoryValue, setPriceValue, setSearchName, setBrandData, setCategoryData, setPageData, setPageValue, setStatus } = filterShoes.actions;
 export const filterReducer = filterShoes.reducer;

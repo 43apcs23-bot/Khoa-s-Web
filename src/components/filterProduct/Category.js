@@ -3,11 +3,11 @@ import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri';
 import { TbDiscount } from 'react-icons/tb';
 import { Menu } from '@headlessui/react';
 import { useSelector } from 'react-redux';
-import { LoadingBtn } from '../../toastify';
 
 const ProductDropdown = ({ Category, setCategory }) => {
-  const { categoryData, status } = useSelector((state) => state.filterShoes);
   const [isOpen, setIsOpen] = useState(false);
+  const { categoryData } = useSelector((state) => state.filterShoes);
+
   return (
     <Menu as='div' className='dropdown relative'>
       <Menu.Button
@@ -17,7 +17,7 @@ const ProductDropdown = ({ Category, setCategory }) => {
         <TbDiscount className='dropdown-icon-primary' />
         <div>
           <div className='text-[15px] font-medium leading-tight'>
-            {Category}
+            {Category || 'Danh mục (tất cả)'}
           </div>
           <div className='text-[13px]'>Chọn danh mục</div>
         </div>
@@ -29,19 +29,16 @@ const ProductDropdown = ({ Category, setCategory }) => {
       </Menu.Button>
 
       <Menu.Items className='dropdown-menu'>
-        {status !== 'idle' ? <LoadingBtn color={"black"} width={10} /> :
-          categoryData?.map((Category, index) => {
-            return (
-              <Menu.Item
-                as='li'
-                onClick={() => setCategory(Category)}
-                key={index}
-                className='cursor-pointer hover:text-rose-700 transition'
-              >
-                {Category}
-              </Menu.Item>
-            );
-          })}
+        {categoryData?.map((option, index) => (
+          <Menu.Item
+            as='li'
+            key={index}
+            onClick={() => setCategory(option)}
+            className='cursor-pointer hover:text-rose-700 transition'
+          >
+            {option}
+          </Menu.Item>
+        ))}
       </Menu.Items>
     </Menu>
   );

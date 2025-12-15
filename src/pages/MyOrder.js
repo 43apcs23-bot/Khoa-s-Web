@@ -9,7 +9,7 @@ const MyOrders = () => {
   const [activeTab, setActiveTab] = useState("uncompleted");
 
   useEffect(() => {
-    dispatch(getMyOrders());
+    dispatch(getMyOrders({ limit: 6 }));
   }, [dispatch]);
 
   const completedOrders = myOrders?.filter(

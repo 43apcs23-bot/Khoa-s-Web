@@ -8,14 +8,17 @@ import {
     cartQuantity,
     getCarts,
     deleteCarts,
-    checkoutAct,
-    CartisOpen
+    CartisOpen,
+    toggleSelect,
+    selectAll,
+    clearSelection
 } from '../statemanagement/slice/cartSlice'
 import { LoadingBtn, NotifyInfo } from '../toastify';
 
 export default function Cart() {
     const dispatch = useDispatch()
     const { isOpenCart, cartData, cartIds, status } = useSelector((state) => state.cart)
+    const { selectedCartIds } = useSelector((state) => state.cart)
 
     useEffect(() => {
         dispatch(getCarts())
@@ -51,25 +54,28 @@ export default function Cart() {
         dispatch(deleteCarts(id))
     }
 
-    function CheckoutBtn(total) {
-        const hasInvalidItem = data.some(
-            item => item.quantityUserAdd > item.quantity
-        )
+
+
+    function CheckoutSelected() {
+        if (selectedCartIds.length === 0) return NotifyInfo('Vui lòng chọn ít nhất một sản phẩm để thanh toán')
+
+        const hasInvalidItem = data
+            .filter(item => selectedCartIds.includes(item._id))
+            .some(item => item.quantityUserAdd > item.quantity)
 
         if (hasInvalidItem) {
             return NotifyInfo("Một số sản phẩm không đủ số lượng trong kho")
         }
 
-        // navigate to checkout form
-        const navigate = window.location;
         window.location.href = '/checkout'
     }
 
     const size = window.innerWidth > 768 ? 'md' : 'sm'
-    const totalPrice = data.reduce(
+    const selectedData = selectedCartIds && selectedCartIds.length > 0 ? data.filter(item => selectedCartIds.includes(item._id)) : []
+    const totalPrice = selectedData.length > 0 ? selectedData.reduce(
         (acc, item) => acc + item.quantityUserAdd * item.price,
         0
-    )
+    ) : 0
 
     return (
         <>
@@ -101,7 +107,22 @@ export default function Cart() {
 
                                 {/* CART ITEMS */}
                                 <div className="flex-1 overflow-auto px-4">
+                                    <div className='mb-4 flex items-center justify-between'>
+                                        <label className='flex items-center gap-x-2'>
+                                            <input type='checkbox' className='form-checkbox' onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    dispatch(selectAll())
+                                                } else {
+                                                    dispatch(clearSelection())
+                                                }
+                                            }} checked={selectedCartIds.length === cartIds.length && cartIds.length > 0} />
+                                            <span className='text-sm'>Chọn tất cả</span>
+                                        </label>
+                                        <button className='text-sm text-rose-700' onClick={() => CheckoutSelected()}>Thanh toán đã chọn</button>
+                                    </div>
+
                                     {data.slice().reverse().map((Products) => {
+                                        const isSelected = selectedCartIds.includes(Products._id)
                                         const isOverStock =
                                             Products.quantityUserAdd > Products.quantity
 
@@ -112,6 +133,9 @@ export default function Cart() {
                                                 ${isOverStock ? 'border border-red-500' : ''}`}
                                             >
                                                 <div className='flex'>
+                                                    <div className='mr-3 flex items-start pt-2'>
+                                                        <input type='checkbox' checked={isSelected} onChange={() => dispatch(toggleSelect(Products._id))} />
+                                                    </div>
                                                     <div className='relative'>
                                                         <img
                                                             className='w-[100px] h-[100px] object-cover'
@@ -186,15 +210,15 @@ export default function Cart() {
                                 <div className="p-4 border-t">
                                     <div className="flex justify-between items-center font-semibold">
                                         <span>Tổng:</span>
-                                        <span>VND {totalPrice}</span>
+                                        <span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPrice)}</span>
                                     </div>
 
                                     <button
                                         className="w-full mt-3 bg-[#FE3E69] hover:bg-[#ff2f5c] 
                                         text-white py-2 rounded-lg hover:scale-105"
-                                        onClick={() => CheckoutBtn(totalPrice)}
+                                        onClick={() => CheckoutSelected()}
                                     >
-                                        Thanh toán
+                                        {selectedCartIds && selectedCartIds.length > 0 ? `Thanh toán (${selectedCartIds.length})` : 'Thanh toán'}
                                     </button>
                                 </div>
                             </Dialog.Panel>
