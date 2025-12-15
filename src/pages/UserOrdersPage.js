@@ -76,7 +76,7 @@ export default function UserOrdersPage() {
     }, { rootMargin: '200px' })
     obs.observe(node)
     return () => obs.disconnect()
-  }, [dispatch, cursor, hasMore, loadingMore, loading, isAdmin])
+  }, [dispatch, cursor, hasMore, loadingMore, loading, isAdmin, debouncedTerm])
 
   const orders = isAdmin ? allOrders : myOrders
 
