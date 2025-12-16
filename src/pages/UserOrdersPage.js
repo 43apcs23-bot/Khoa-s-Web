@@ -199,7 +199,10 @@ function OrderCard({ order, onClick, isAdmin = false, refreshOrders = null }) {
   const meLocal = tokenLocal ? decodeToken(tokenLocal) : null
   const localIsAdmin = isAdmin || meLocal?.role === true
   const isOwner = order.userId?._id === meLocal?._id || order.userId === meLocal?._id
-
+  async function handleCancel(e) {
+    e.stopPropagation();
+    // opening modal handled by component state
+  }
 
   const [showCancel, setShowCancel] = React.useState(false)
   const [cancelReason, setCancelReason] = React.useState('')
