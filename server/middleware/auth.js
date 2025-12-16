@@ -2,21 +2,28 @@ import jwt from "jsonwebtoken";
 
 const auth = async (req, res, next) => {
   try {
-    if (!req.cookies.token) {
-      return res.status(401).json({
-        message: "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại"
-      });
+    // Prefer cookie-based session token (works for same-site setups)
+    let token = null;
+    if (req.cookies && req.cookies.token) token = req.cookies.token;
+
+    // Fallback to Authorization header Bearer token for cross-origin setups
+    if (!token && req.headers && req.headers.authorization) {
+      const parts = req.headers.authorization.split(' ');
+      if (parts.length === 2 && parts[0] === 'Bearer') token = parts[1];
     }
 
-    const cookie = req.cookies.token;
-    let decodedData;
-    decodedData = jwt.verify(cookie, process.env.JWT_SECRET);
+    if (!token) {
+      return res.status(401).json({ message: 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại' });
+    }
 
+    const decodedData = jwt.verify(token, process.env.JWT_SECRET);
     if (decodedData) {
       req.userId = decodedData?._id;
       next();
     } else {
-      return res.clearCookie("token");
+      // if invalid, clear cookie and deny
+      res.clearCookie('token');
+      return res.status(401).json({ message: 'Phiên đăng nhập không hợp lệ' });
     }
   } catch (error) {
     res.clearCookie("token");

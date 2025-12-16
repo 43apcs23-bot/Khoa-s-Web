@@ -25,8 +25,8 @@ export const registeraUser = createAsyncThunk('User/registeraUser', async ({ aut
 export const loginaUser = createAsyncThunk('User/loginaUser', async ({ authData, navigate, closeModal, closeModalDropDown }, { rejectWithValue }) => {
     try {
         const { data: { message, token } } = await api.loginaUser(authData);
-        // get cookie from server
-        const cookie = document.cookies;
+        // get cookie from server (for debug)
+        const cookie = document.cookie;
         console.log(cookie, "cookie");
         closeModal();
         window.innerWidth < 768 && closeModalDropDown();
@@ -82,6 +82,10 @@ export const logoutUser = createAsyncThunk('User/logoutUser', async ({ navigate 
         navigate('/');
         return;
     } catch (error) {
-        console.log(error);
+        // If signout request fails (network or auth), still clear local state
+        console.error('Logout request failed:', error);
+        localStorage.clear();
+        navigate('/');
+        return;
     }
 })

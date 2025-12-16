@@ -8,9 +8,9 @@ import Product from '../models/productModel.js';
 import { APIfeatures } from './paginate.js';
 
 const generateToken = (data) => {
-    const { email, name, role, wishlist, number, address, cart } = data;
+    const { _id, email, name, role, wishlist, number, address, cart } = data;
     return jwt.sign(
-        { email, name, role, wishlist, number, address, cart },
+        { _id, email, name, role, wishlist, number, address, cart },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN }
     );

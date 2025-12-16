@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { GetAllOrdersAPI, AdvanceOrderAPI, CancelOrderAPI } from '../statemanagement/api/orderApi'
 import { NotifySuccess, NotifyError } from '../toastify'
+import { DEFAULT_SHIPPING_FEE } from '../utils/costs'
 import { decodeToken } from 'react-jwt'
 import { useNavigate } from 'react-router-dom'
 
@@ -66,7 +67,10 @@ export default function AdminOrdersPage() {
                 <div className='font-medium'>Mã: {o._id.slice(-8)}</div>
                 <div className='text-sm text-gray-500'>Người đặt: {o.userId?.name || '—'} ({o.userId?.email || '—'})</div>
                 <div className='text-sm text-gray-500'>Trạng thái: {o.shippingStatus}</div>
-                <div className='text-sm text-gray-500'>Tổng: {o.totalAmount}</div>
+                <div className='text-sm text-gray-500'>Tổng: {(() => {
+                    const displayTotal = (o.totalAmount || 0) + DEFAULT_SHIPPING_FEE
+                    try { return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(displayTotal) } catch (e) { return `VND ${displayTotal}` }
+                  })()}</div>
               </div>
               <div className='flex items-center gap-3'>
                 <button disabled={o.shippingStatus === 'Giao hàng thành công' || o.shippingStatus === 'Đã hủy'} onClick={() => handleCancel(o._id)} className={`text-sm ${o.shippingStatus === 'Giao hàng thành công' || o.shippingStatus === 'Đã hủy' ? 'text-gray-400 cursor-not-allowed' : 'text-red-600 hover:underline'}`}>{o.shippingStatus === 'Đã hủy' ? 'Đã hủy' : 'Hủy'}</button>

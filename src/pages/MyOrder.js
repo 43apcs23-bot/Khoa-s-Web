@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { DEFAULT_SHIPPING_FEE } from '../utils/costs'
 import { useDispatch, useSelector } from "react-redux";
 import { getMyOrders } from "../statemanagement/slice/orderSlice";
 
@@ -19,6 +20,10 @@ const MyOrders = () => {
   const uncompletedOrders = myOrders?.filter(
     (o) => o.shippingStatus !== "DELIVERED"
   );
+
+  const formatCurrency = (v) => {
+    try { return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v) } catch (e) { return `VND ${v}` }
+  }
 
   return (
     <div className="container mx-auto px-4 min-h-[800px]">
@@ -120,7 +125,10 @@ const OrderCard = ({ order }) => {
       </div>
 
       <div className="mt-3 sm:mt-0 text-rose-600 font-semibold">
-        VND {order.totalAmount}
+        {(() => {
+          const displayTotal = (order.totalAmount || 0) + DEFAULT_SHIPPING_FEE
+          return formatCurrency(displayTotal)
+        })()}
       </div>
     </div>
   );

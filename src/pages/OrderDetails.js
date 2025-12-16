@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { GetOrderByIdAPI, CancelOrderAPI, CompleteOrderAPI, AdvanceOrderAPI, RequestCancelOrderAPI } from '../statemanagement/api/orderApi'
+import CancelModal from '../components/CancelModal'
+import { canAdminCancel } from '../utils/orderHelpers'
+import { DEFAULT_SHIPPING_FEE } from '../utils/costs'
 import { NotifySuccess, NotifyError } from '../toastify'
 import { decodeToken } from 'react-jwt'
 import { useDispatch } from 'react-redux'
@@ -39,18 +42,18 @@ export default function OrderDetails() {
     fetchOrder()
   }, [fetchOrder])
 
-  async function handleCancelSubmit() {
-    if (!cancelReason || cancelReason.trim().length === 0) {
+  async function handleCancelSubmit(reason) {
+    if (!reason || reason.trim().length === 0) {
       return NotifyError('Vui lòng nhập lý do hủy')
     }
     setSubmitting(true)
     try {
       let data
       if (me?.role === true) {
-        const res = await CancelOrderAPI(id, { reason: cancelReason })
+        const res = await CancelOrderAPI(id, { reason })
         data = res.data
       } else {
-        const res = await RequestCancelOrderAPI(id, { reason: cancelReason })
+        const res = await RequestCancelOrderAPI(id, { reason })
         data = res.data
       }
       NotifySuccess(data.message || 'Đã hủy đơn')
@@ -109,14 +112,28 @@ export default function OrderDetails() {
           </div>
           <div className="mt-3 sm:mt-0 text-right">
             <div className="text-sm text-gray-500">Tổng</div>
-            <div className="text-2xl font-bold text-rose-600">{formatCurrency(order.totalAmount)}</div>
+            {(() => {
+              const displayTotal = (order.totalAmount || 0) + DEFAULT_SHIPPING_FEE
+              return <div className="text-2xl font-bold text-rose-600">{formatCurrency(displayTotal)}</div>
+            })()}
           </div>
         </div>
 
         <div className='mt-4 flex gap-3'>
           {(me?.role === true) && (
             <>
-              <button onClick={() => { if (order.shippingStatus !== 'Đã hủy') setShowCancel(true) }} disabled={order.shippingStatus === 'Đã hủy'} className={`px-4 py-2 ${order.shippingStatus === 'Đã hủy' ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-red-600 text-white'} rounded`}>{order.shippingStatus === 'Đã hủy' ? 'Đã hủy' : 'Hủy đơn (Admin)'}</button>
+              {(() => {
+                const adminCannotCancel = !canAdminCancel(order)
+                return (
+                  <button
+                    onClick={() => { if (!adminCannotCancel) setShowCancel(true) }}
+                    disabled={adminCannotCancel}
+                    className={`px-4 py-2 ${adminCannotCancel ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-red-600 text-white'} rounded`}
+                  >
+                    {adminCannotCancel ? 'Không thể hủy' : (order.shippingStatus === 'Đã hủy' ? 'Đã hủy' : 'Hủy đơn (Admin)')}
+                  </button>
+                )
+              })()}
               {/* admin advance when possible */}
               {['Chờ xác nhận','Đang xử lý','Đang vận chuyển'].includes(order.shippingStatus) && (
                 <button onClick={handleAdvance} disabled={submitting} className='px-4 py-2 bg-blue-600 text-white rounded ml-2'>{submitting ? 'Đang...' : 'Tiếp'}</button>
@@ -124,7 +141,7 @@ export default function OrderDetails() {
             </>
           )}
           {(order.userId?._id === me?._id && order.shippingStatus === 'Chờ xác nhận') && (
-            <button disabled title='Yêu cầu hủy phải do admin thực hiện' className='px-4 py-2 bg-gray-400 text-white rounded'>Hủy đơn (chờ admin)</button>
+            <button onClick={() => setShowCancel(true)} className='px-4 py-2 bg-red-600 text-white rounded'>Hủy đơn</button>
           )}
           {(order.userId?._id === me?._id && order.shippingStatus === 'Giao hàng thành công') && (
             <button onClick={handleComplete} disabled={submitting} className='px-4 py-2 bg-green-600 text-white rounded'>{submitting ? 'Đang...' : 'Hoàn thành'}</button>
@@ -174,19 +191,7 @@ export default function OrderDetails() {
         </div>
       </div>
 
-      {/* Cancel modal */}
-      {showCancel && (
-        <div className='fixed inset-0 bg-black/40 flex items-center justify-center'>
-          <div className='bg-white rounded p-6 w-full max-w-md'>
-            <h3 className='text-lg font-semibold mb-2'>Lý do hủy đơn</h3>
-            <textarea value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} className='w-full border rounded p-2 h-24' placeholder='Nhập lý do hủy...' />
-            <div className='mt-4 flex justify-end gap-3'>
-              <button onClick={() => { setShowCancel(false); setCancelReason('') }} className='px-4 py-2 rounded border'>Huỷ</button>
-              <button onClick={handleCancelSubmit} disabled={submitting} className='px-4 py-2 rounded bg-red-600 text-white'>{submitting ? 'Đang...' : 'Gửi và hủy'}</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <CancelModal open={showCancel} initialReason={cancelReason} onClose={() => { setShowCancel(false); setCancelReason('') }} onSubmit={handleCancelSubmit} submitting={submitting} />
     </div>
   )
 }

@@ -5,6 +5,9 @@ import { CancelOrderAPI, CompleteOrderAPI, AdvanceOrderAPI, GetAllOrdersAPI, Req
 import { NotifySuccess, NotifyError, NotifyInfo } from '../toastify'
 import { decodeToken } from 'react-jwt'
 import { useNavigate } from 'react-router-dom'
+import CancelModal from '../components/CancelModal'
+import { canAdminCancel, canOwnerCancel } from '../utils/orderHelpers'
+import { DEFAULT_SHIPPING_FEE } from '../utils/costs'
 
 const formatCurrency = (value) => {
   try {
@@ -198,17 +201,23 @@ function OrderCard({ order, onClick, isAdmin = false, refreshOrders = null }) {
   const isOwner = order.userId?._id === meLocal?._id || order.userId === meLocal?._id
   async function handleCancel(e) {
     e.stopPropagation();
+    // opening modal handled by component state
+  }
+
+  const [showCancel, setShowCancel] = React.useState(false)
+  const [cancelReason, setCancelReason] = React.useState('')
+  const [submittingCancel, setSubmittingCancel] = React.useState(false)
+
+  async function handleCancelSubmit(reason) {
+    setSubmittingCancel(true)
     try {
-      const reason = prompt('Nhập lý do hủy đơn (tùy chọn):')
       if (meLocal?.role === true) {
-        // admin cancel
         await CancelOrderAPI(order._id, { reason })
       } else {
-        // owner cancel (only allowed when 'Chờ xác nhận')
         if (order.shippingStatus !== 'Chờ xác nhận') {
+          setSubmittingCancel(false)
           return NotifyError('Chỉ có thể hủy khi trạng thái là Chờ xác nhận')
         }
-        if (!reason || reason.trim().length === 0) return NotifyError('Vui lòng nhập lý do hủy')
         await RequestCancelOrderAPI(order._id, { reason })
       }
       NotifySuccess('Đã hủy đơn')
@@ -216,6 +225,10 @@ function OrderCard({ order, onClick, isAdmin = false, refreshOrders = null }) {
       else dispatch(getMyOrders({ limit: 6 }))
     } catch (err) {
       NotifyError(err?.response?.data?.message || err.message || 'Đã có lỗi xảy ra')
+    } finally {
+      setSubmittingCancel(false)
+      setShowCancel(false)
+      setCancelReason('')
     }
   }
 
@@ -262,7 +275,11 @@ function OrderCard({ order, onClick, isAdmin = false, refreshOrders = null }) {
       </div>
 
       <div className="mt-4 flex items-center justify-between">
-        <div className="font-semibold text-rose-600">{formatCurrency(order.totalAmount)}</div>
+        {/* Display total including shipping fee (UI-only). If server already saved shippingFee, use it; otherwise use default. */}
+        {(() => {
+          const displayTotal = (order.totalAmount || 0) + DEFAULT_SHIPPING_FEE
+          return <div className="font-semibold text-rose-600">{formatCurrency(displayTotal)}</div>
+        })()}
         <div className='flex items-center gap-3'>
           {/* Show action buttons depending on role/status */}
           {(() => {
@@ -272,13 +289,19 @@ function OrderCard({ order, onClick, isAdmin = false, refreshOrders = null }) {
             }
 
             if (localIsAdmin) {
-              const adminCannotCancel = ['Đã hủy','Giao hàng thành công','Hoàn thành'].includes(order.shippingStatus)
-              return <button onClick={handleCancel} disabled={adminCannotCancel} className={`text-sm ${adminCannotCancel ? 'text-red-300 cursor-not-allowed' : 'text-red-600 hover:underline'}`}>{adminCannotCancel ? 'Không thể hủy' : 'Hủy'}</button>
+              const adminCannotCancel = !canAdminCancel(order)
+              return <>
+                <button onClick={() => setShowCancel(true)} disabled={adminCannotCancel} className={`text-sm ${adminCannotCancel ? 'text-red-300 cursor-not-allowed' : 'text-red-600 hover:underline'}`}>{adminCannotCancel ? 'Không thể hủy' : 'Hủy'}</button>
+                <CancelModal open={showCancel} initialReason={cancelReason} onClose={() => { setShowCancel(false); setCancelReason('') }} onSubmit={handleCancelSubmit} submitting={submittingCancel} />
+              </>
             }
 
             // owner can cancel when order is 'Chờ xác nhận'
-            if (isOwner && order.shippingStatus === 'Chờ xác nhận') {
-              return <button onClick={handleCancel} className='text-sm text-red-600 hover:underline'>Hủy</button>
+            if (isOwner && canOwnerCancel(order, meLocal)) {
+              return <>
+                <button onClick={() => setShowCancel(true)} className='text-sm text-red-600 hover:underline'>Hủy</button>
+                <CancelModal open={showCancel} initialReason={cancelReason} onClose={() => { setShowCancel(false); setCancelReason('') }} onSubmit={handleCancelSubmit} submitting={submittingCancel} />
+              </>
             }
 
             return null
