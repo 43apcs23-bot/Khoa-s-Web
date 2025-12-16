@@ -10,8 +10,11 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
-// sanitize CLIENT_URL so quotes or accidental spaces in `server/.env` don't break CORS checks
-const CLIENT_URL = (process.env.CLIENT_URL || '').replace(/^['"]|['"]$/g, '').trim();
+// sanitize CLIENT_URL so quotes, accidental spaces or trailing slashes in `server/.env` don't break CORS checks
+const CLIENT_URL = (process.env.CLIENT_URL || '')
+  .replace(/^['"]|['"]$/g, '')
+  .trim()
+  .replace(/\/+$/g, '');
 
 const app = express();
 app.use(cookieParser());

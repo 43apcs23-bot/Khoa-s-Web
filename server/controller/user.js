@@ -23,11 +23,14 @@ const generateSessionToken = (data, res) => {
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN }
     );
+    const cookieDays = Number(process.env.JWT_COOKIE_EXPIRES_IN) || 7;
     res.cookie('token', token, {
-        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + cookieDays * 24 * 60 * 60 * 1000),
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production' ? true : false,
-        sameSite: 'strict'
+        // allow cross-site cookies in production (Netlify frontend <-> Railway backend)
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        path: '/'
     });
 };
 
@@ -100,7 +103,7 @@ export const signOut = async (req, res) => {
         }
 
         const userName = await User.findById(userId).select("name");
-        res.clearCookie("token");
+        res.clearCookie("token", { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', path: '/' });
 
         res.status(200).json({
             message: `Tạm biệt, ${userName.name.split(" ")[0]}`
