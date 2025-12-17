@@ -63,12 +63,21 @@ export const getShoeByIdOnPageLoad = createAsyncThunk('Shoe/getShoeByIdOnPageLoa
 }
 );
 
-export const createShoe = createAsyncThunk('Shoe/createShoe', async ({ closeModal
-    , AddProductData }, { rejectWithValue }) => {
+export const createShoe = createAsyncThunk('Shoe/createShoe', async ({ closeModal, AddProductData }, { rejectWithValue, dispatch, getState }) => {
     try {
         const { data: { message } } = await api.CreateShoeAPI(AddProductData);
         closeModal();
         NotifySuccess(message);
+        // Refresh product list using current filter settings so UI updates immediately
+        try {
+            const state = getState();
+            const { filterShoes: { page = 1, limit = 100, sort = 'createdAt', brand = '', category = '', price = '', searchName = '', age = '' } } = state;
+            dispatch(getAllShoe({ page, limit, sort, brand, category, price, searchName, age }));
+        } catch (err) {
+            console.error('Failed to refresh product list after createShoe', err);
+            // fallback: dispatch a wide fetch
+            dispatch(getAllShoe({ page: 1, limit: 100, sort: 'createdAt', brand: '', category: '', price: '', searchName: '', age: '' }));
+        }
         return;
     } catch (error) {
         if (error?.response?.status >= 400 && error?.response?.status <= 500) {
