@@ -6,12 +6,20 @@ export const sendEmail = async (email, subject, text) => {
             host: process.env.HOST,
             service: process.env.SERVICE,
             port: Number(process.env.EMAIL_PORT),
-            secure: Boolean(process.env.SECURE),
+            // strict parse: env should be 'true' or 'false'
+            secure: process.env.SECURE === 'true',
             auth: {
                 user: process.env.USER,
                 pass: process.env.PASS,
             },
         });
+        try {
+            await transporter.verify();
+            console.info('SMTP transport verified');
+        } catch (verifyErr) {
+            console.error('SMTP verify failed:', verifyErr);
+            return { status: verifyErr.responseCode || 500, error: verifyErr.message || String(verifyErr) };
+        }
         await transporter.sendMail({
             from: `${process.env.USER_NAME || 'FootGear H'} <${process.env.USER}>`,
             to: email,
@@ -48,7 +56,8 @@ export const sendEmail = async (email, subject, text) => {
         });
         return { status: 200 };
     } catch (error) {
-        return { status: error.responseCode };
+        console.error('sendEmail error:', error);
+        return { status: error.responseCode || 500, error: error.message || String(error) };
     }
 };
 
@@ -58,12 +67,19 @@ export const CheckoutEmail = async (subject, user, total, cart, products) => {
             host: process.env.HOST,
             service: process.env.SERVICE,
             port: Number(process.env.EMAIL_PORT),
-            secure: Boolean(process.env.SECURE),
+            secure: process.env.SECURE === 'true',
             auth: {
                 user: process.env.USER,
                 pass: process.env.PASS,
             },
         });
+        try {
+            await transporter.verify();
+            console.info('SMTP transport verified');
+        } catch (verifyErr) {
+            console.error('SMTP verify failed:', verifyErr);
+            return { status: verifyErr.responseCode || 500, error: verifyErr.message || String(verifyErr) };
+        }
         await transporter.sendMail({
             from: `${process.env.USER_NAME || 'FootGear H'} <${process.env.USER}>`,
             to: user.email,
@@ -158,8 +174,8 @@ export const CheckoutEmail = async (subject, user, total, cart, products) => {
         });
         return { status: 200 };
     } catch (error) {
-        console.log(error + "error");
-        return { status: error.responseCode };
+        console.error('CheckoutEmail error:', error);
+        return { status: error.responseCode || 500, error: error.message || String(error) };
     }
 };
 
