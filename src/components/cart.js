@@ -4,6 +4,7 @@ import { HiShoppingCart } from "react-icons/hi";
 import { IoIosAddCircle } from 'react-icons/io';
 import { AiFillMinusCircle } from 'react-icons/ai';
 import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import {
     cartQuantity,
     getCarts,
@@ -17,8 +18,18 @@ import { LoadingBtn, NotifyInfo } from '../toastify';
 
 export default function Cart() {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const { isOpenCart, cartData, cartIds, status } = useSelector((state) => state.cart)
     const { selectedCartIds } = useSelector((state) => state.cart)
+
+    // persist selection to localStorage whenever it changes so Checkout can restore it
+    useEffect(() => {
+        try {
+            localStorage.setItem('selectedCartIds', JSON.stringify(selectedCartIds));
+        } catch (e) {
+            console.error('Failed to persist selectedCartIds', e);
+        }
+    }, [selectedCartIds])
 
     useEffect(() => {
         dispatch(getCarts())
@@ -59,19 +70,29 @@ export default function Cart() {
     function CheckoutSelected() {
         if (selectedCartIds.length === 0) return NotifyInfo('Vui lòng chọn ít nhất một sản phẩm để thanh toán')
 
+        const selectedSet = new Set(selectedCartIds.map(id => String(id)));
         const hasInvalidItem = data
-            .filter(item => selectedCartIds.includes(item._id))
+            .filter(item => selectedSet.has(String(item._id)))
             .some(item => item.quantityUserAdd > item.quantity)
 
         if (hasInvalidItem) {
             return NotifyInfo("Một số sản phẩm không đủ số lượng trong kho")
         }
 
-        window.location.href = '/checkout'
+        // ensure selection persisted (redundant because of effect above) and navigate with React Router
+        try {
+            localStorage.setItem('selectedCartIds', JSON.stringify(selectedCartIds));
+        } catch (e) {
+            console.error('Failed to persist selectedCartIds before navigation', e);
+        }
+
+        dispatch(CartisOpen(false))
+        navigate('/checkout')
     }
 
     const size = window.innerWidth > 768 ? 'md' : 'sm'
-    const selectedData = selectedCartIds && selectedCartIds.length > 0 ? data.filter(item => selectedCartIds.includes(item._id)) : []
+    const selectedSetView = new Set((selectedCartIds || []).map(id => String(id)));
+    const selectedData = selectedCartIds && selectedCartIds.length > 0 ? data.filter(item => selectedSetView.has(String(item._id))) : []
     const totalPrice = selectedData.length > 0 ? selectedData.reduce(
         (acc, item) => acc + item.quantityUserAdd * item.price,
         0

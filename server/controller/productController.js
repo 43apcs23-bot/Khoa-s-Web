@@ -4,8 +4,11 @@ import { APIfeatures } from "./paginate.js";
 /* ===================== GET PRODUCT PAGE ===================== */
 export const getproductPage = async (req, res) => {
   try {
-    req.query.page = parseInt(req.query.page);
-    req.query.limit = parseInt(req.query.limit);
+    // Coerce page and limit to safe numeric defaults
+    const page = Number.isNaN(parseInt(req.query.page)) ? 1 : parseInt(req.query.page);
+    const limit = Number.isNaN(parseInt(req.query.limit)) ? 8 : parseInt(req.query.limit);
+    req.query.page = page;
+    req.query.limit = limit;
 
     const features = new APIfeatures(productModel.find(), req.query)
       .sorting()
@@ -40,8 +43,8 @@ export const getproductPage = async (req, res) => {
       everyday,
     });
   } catch (error) {
-    console.log(error);
-    res.status(404).json({ message: "Không thể lấy danh sách sản phẩm" });
+    console.error('getproductPage error', { error: error && error.message, query: req.query });
+    res.status(404).json({ message: "Không thể lấy danh sách sản phẩm", error: error && error.message });
   }
 };
 

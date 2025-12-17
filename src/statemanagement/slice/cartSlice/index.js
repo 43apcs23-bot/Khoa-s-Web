@@ -109,6 +109,8 @@ export const checkoutAct = (payload) => async (dispatch) => {
         localStorage.setItem('authenticate', token)
         // refresh cart data from server to reflect partial/full checkout
         dispatch(getCarts());
+        // cleanup persisted selection since we just checked out
+        try { localStorage.removeItem('selectedCartIds'); } catch(e) { /* ignore */ }
         NotifySuccess(message || 'Thanh toán thành công');
         dispatch(setStatus(Status.IDLE));
         return data; // return saved order to caller
@@ -166,11 +168,15 @@ const cartSlice = createSlice({
         clearSelection: (state) => {
             state.selectedCartIds = [];
         },
+        // Explicitly set selected cart ids (used to restore selection on Checkout)
+        setSelectedCartIds: (state, action) => {
+            state.selectedCartIds = Array.isArray(action.payload) ? action.payload : [];
+        },
         isOpenCart: (state, action) => {
             state.isOpenCart = action.payload;
         },
     },
 });
 
-export const { setStatus, addCartData, addCartIds, getAllCartData, deleteCartData, checkoutCart, toggleSelect, selectAll, clearSelection, isOpenCart } = cartSlice.actions;
+export const { setStatus, addCartData, addCartIds, getAllCartData, deleteCartData, checkoutCart, toggleSelect, selectAll, clearSelection, setSelectedCartIds, isOpenCart } = cartSlice.actions;
 export const cartReducer = cartSlice.reducer;

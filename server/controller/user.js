@@ -51,6 +51,8 @@ export const signin = async (req, res) => {
 
         const token = generateToken(existingUser);
 
+        // If user is not verified, ensure a verification token exists and send the email
+        // but DO NOT block sign-in — allow users to login for demo purposes even if not verified.
         if (!existingUser?.verifiedUser) {
             let checkVerify = await verifyUser.findOne({ userId: existingUser._id });
             if (!checkVerify) {
@@ -58,17 +60,21 @@ export const signin = async (req, res) => {
                     userId: existingUser._id,
                     token: token,
                 }).save();
-
-                const baseUrl = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/+$/g, '');
-                const url = `${baseUrl}/user/${existingUser._id}/verify/${checkVerify.token}`;
-
-                sendEmail(existingUser.email, "Xác minh email từ Shoes Store", url);
-                return res.status(355).json({ message: "Vui lòng xác minh email của bạn" });
+            } else {
+                // refresh token to be safe
+                checkVerify.token = token;
+                await checkVerify.save();
             }
 
-            return res.status(355).send({
-                message: "Link xác minh đã được gửi, vui lòng kiểm tra email"
-            });
+            const baseUrl = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/+$/g, '');
+            const url = `${baseUrl}/user/${existingUser._id}/verify/${checkVerify.token}`;
+
+            // send verification email asynchronously; do not await nor block sign-in
+            sendEmail(existingUser.email, "Xác minh email từ Shoes Store", url)
+                .then(r => console.info('Verification email send result', r))
+                .catch(e => console.error('Verification email send error', e));
+
+            // continue to sign-in (do not return). This allows login even if user is not verified (useful for demos).
         }
 
         generateSessionToken(existingUser, res);

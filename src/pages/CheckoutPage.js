@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { checkoutAct, clearSelection } from '../statemanagement/slice/cartSlice'
+import { checkoutAct, clearSelection, setSelectedCartIds, CartisOpen } from '../statemanagement/slice/cartSlice'
 import { NotifyInfo, NotifyError } from '../toastify'
 import { DEFAULT_SHIPPING_FEE } from '../utils/costs'
 
@@ -12,16 +12,32 @@ export default function CheckoutPage() {
   const { selectedCartIds } = useSelector(s => s.cart)
 
   useEffect(() => {
+    // Ensure cart modal is closed when entering Checkout (covers direct navigation / reload)
+    dispatch(CartisOpen(false))
+
+    // Restore selection persisted by the Cart component if present
+    try {
+      if ((!selectedCartIds || selectedCartIds.length === 0) && localStorage.getItem('selectedCartIds')) {
+        const stored = JSON.parse(localStorage.getItem('selectedCartIds')) || [];
+        if (Array.isArray(stored) && stored.length > 0) {
+          dispatch(setSelectedCartIds(stored));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to restore selectedCartIds', e);
+    }
+
     if (!localStorage.getItem('authenticate')) {
       NotifyInfo('Vui lòng đăng nhập để tiếp tục thanh toán')
       navigate('/')
     }
-  }, [navigate])
+  }, [navigate, dispatch, selectedCartIds])
 
   // compute total and items based on selection (if any)
+  const selectedSet = new Set((selectedCartIds || []).map(id => String(id)));
   const selectedItems = selectedCartIds && selectedCartIds.length > 0 ?
-    cartData.filter(item => selectedCartIds.includes(item._id)).map(item => {
-      const idx = cartIds.findIndex(ci => ci.cartId === item._id)
+    cartData.filter(item => selectedSet.has(String(item._id))).map(item => {
+      const idx = cartIds.findIndex(ci => String(ci.cartId) === String(item._id))
       const qty = idx >= 0 ? cartIds[idx].quantity : 1
       return { ...item, qty }
     }) : null

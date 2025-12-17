@@ -12,11 +12,21 @@ export class APIfeatures {
     
     // Handle price filter
     if (queryObj.price) {
-      queryObj.price = queryObj.price.split(" - ");
-      queryObj.price = {
-        $gte: parseInt(queryObj.price[0]),
-        $lte: parseInt(queryObj.price[1]),
-      };
+      // Price expected as "min - max" numeric ranges; ignore non-numeric or unexpected formats
+      if (typeof queryObj.price === 'string' && queryObj.price.includes('-')) {
+        const parts = queryObj.price.split("-").map(p => p.trim());
+        const min = parseInt(parts[0]);
+        const max = parseInt(parts[1]);
+        if (!Number.isNaN(min) && !Number.isNaN(max)) {
+          queryObj.price = { $gte: min, $lte: max };
+        } else {
+          // invalid price range, remove it so it won't cause DB errors
+          delete queryObj.price;
+        }
+      } else {
+        // Not a range string; ignore
+        delete queryObj.price;
+      }
     }
     
     // Handle brand filter (case-insensitive regex)
