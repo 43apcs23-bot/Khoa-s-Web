@@ -1,11 +1,1 @@
-CONNECTION_URL = mongodb+srv://hoangnhat:03sep.as@cluster0.pnonljd.mongodb.net/shoes?appName=Cluster0
-JWT = add secure password
-HOST = smtp.gmail.com
-SALT = 10
-SERVICE = gmail
-EMAIL_PORT = 587
-SECURE = true
-USER = 'your gmail account'
-PASS = 'your generate password'
-PORT = 5000
-BASE_URL = 'https://footgearh.netlify.app'
+
