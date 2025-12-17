@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { checkoutAct, clearSelection } from '../statemanagement/slice/cartSlice'
+import { checkoutAct, clearSelection, CartisOpen } from '../statemanagement/slice/cartSlice'
 import { NotifyInfo, NotifyError } from '../toastify'
 import { DEFAULT_SHIPPING_FEE } from '../utils/costs'
 
@@ -12,21 +12,27 @@ export default function CheckoutPage() {
   const { selectedCartIds } = useSelector(s => s.cart)
 
   useEffect(() => {
+    // Ensure cart modal is closed when entering Checkout (covers direct navigation / reload)
+    dispatch(CartisOpen(false))
+
     if (!localStorage.getItem('authenticate')) {
       NotifyInfo('Vui lòng đăng nhập để tiếp tục thanh toán')
       navigate('/')
     }
-  }, [navigate])
+  }, [navigate, dispatch])
 
   // compute total and items based on selection (if any)
-  const selectedItems = selectedCartIds && selectedCartIds.length > 0 ?
+  const selectedItemsRaw = selectedCartIds && selectedCartIds.length > 0 ?
     cartData.filter(item => selectedCartIds.includes(item._id)).map(item => {
       const idx = cartIds.findIndex(ci => ci.cartId === item._id)
       const qty = idx >= 0 ? cartIds[idx].quantity : 1
       return { ...item, qty }
     }) : null
 
-  const total = selectedItems ? selectedItems.reduce((acc, item) => acc + item.price * item.qty, 0) : cartData.reduce((acc, item) => {
+  // treat empty selection as "no selection" (so checkout defaults to full cart)
+  const selectedItems = (selectedItemsRaw && selectedItemsRaw.length > 0) ? selectedItemsRaw : null
+
+  const total = (selectedItems && selectedItems.length > 0) ? selectedItems.reduce((acc, item) => acc + item.price * item.qty, 0) : cartData.reduce((acc, item) => {
     const idx = cartIds.findIndex(ci => ci.cartId === item._id)
     const qty = idx >= 0 ? cartIds[idx].quantity : 1
     return acc + item.price * qty
@@ -50,7 +56,8 @@ export default function CheckoutPage() {
     setLoading(true)
     try {
       const payload = { total, shippingInfo: { name: form.name, phone: form.phone, address: form.address, note: form.note }, paymentMethod: form.paymentMethod }
-      if (selectedItems) {
+      // Only include items when there is a non-empty selection — avoid sending an empty array which causes server to treat it as "no items specified" and checkout the full cart
+      if (selectedItems && selectedItems.length > 0) {
         payload.items = selectedItems.map(i => ({ cartId: i._id, quantity: i.qty }))
       }
       const savedOrder = await dispatch(checkoutAct(payload))

@@ -4,6 +4,7 @@ import { HiShoppingCart } from "react-icons/hi";
 import { IoIosAddCircle } from 'react-icons/io';
 import { AiFillMinusCircle } from 'react-icons/ai';
 import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import {
     cartQuantity,
     getCarts,
@@ -17,6 +18,7 @@ import { LoadingBtn, NotifyInfo } from '../toastify';
 
 export default function Cart() {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const { isOpenCart, cartData, cartIds, status } = useSelector((state) => state.cart)
     const { selectedCartIds } = useSelector((state) => state.cart)
 
@@ -67,7 +69,9 @@ export default function Cart() {
             return NotifyInfo("Một số sản phẩm không đủ số lượng trong kho")
         }
 
-        window.location.href = '/checkout'
+        // Close the cart modal before navigating to Checkout so it doesn't remain open on that page
+        dispatch(CartisOpen(false))
+        navigate('/checkout')
     }
 
     const size = window.innerWidth > 768 ? 'md' : 'sm'

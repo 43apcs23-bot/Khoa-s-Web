@@ -51,6 +51,9 @@ export const signin = async (req, res) => {
 
         const token = generateToken(existingUser);
 
+        // If user is not verified, create or refresh a verification token and send the verification email,
+        // but DO NOT block sign-in — allow login for demo purposes and send the email asynchronously.
+        let verificationSent = false;
         if (!existingUser?.verifiedUser) {
             let checkVerify = await verifyUser.findOne({ userId: existingUser._id });
             if (!checkVerify) {
@@ -58,17 +61,21 @@ export const signin = async (req, res) => {
                     userId: existingUser._id,
                     token: token,
                 }).save();
-
-                const baseUrl = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/+$/g, '');
-                const url = `${baseUrl}/user/${existingUser._id}/verify/${checkVerify.token}`;
-
-                sendEmail(existingUser.email, "Xác minh email từ Shoes Store", url);
-                return res.status(355).json({ message: "Vui lòng xác minh email của bạn" });
+            } else {
+                // refresh token so the link is valid
+                checkVerify.token = token;
+                await checkVerify.save();
             }
 
-            return res.status(355).send({
-                message: "Link xác minh đã được gửi, vui lòng kiểm tra email"
-            });
+            const baseUrl = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/+$/g, '');
+            const url = `${baseUrl}/user/${existingUser._id}/verify/${checkVerify.token}`;
+
+            // send email but don't await — allow login even if email sending fails
+            sendEmail(existingUser.email, "Xác minh email từ Shoes Store", url)
+                .then(r => console.info('Verification email send result', r))
+                .catch(e => console.error('Verification email send error', e));
+
+            verificationSent = true;
         }
 
         generateSessionToken(existingUser, res);
