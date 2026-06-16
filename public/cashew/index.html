@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="meta.title">Hạt Ngọc Xanh - Clean Foods</title>
+  <meta name="description" data-i18n-attr="content:meta.description" content="Brand introduction website for Hạt Ngọc Xanh - Thực Phẩm Sạch." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <button class="nav-burger" type="button" data-i18n-attr="aria-label:nav.menuAria" aria-label="Open navigation" aria-expanded="false" aria-haspopup="true">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="lang-toggle" role="group" aria-label="Language">
+    <button type="button" class="lang-toggle__btn is-active" data-lang="en">EN</button>
+    <button type="button" class="lang-toggle__btn" data-lang="zh">中文</button>
+  </div>
+
+  <nav class="nav-panel" aria-label="Site navigation">
+    <a class="nav-link" href="#about" data-i18n="nav.about">About</a>
+
+    <div class="nav-group">
+      <span class="nav-group__label" data-i18n="nav.products">Products</span>
+      <div class="nav-group__items">
+        <a class="nav-sub" href="#products" data-i18n="nav.cashew">Cashew Nuts</a>
+        <a class="nav-sub" href="#products" data-i18n="nav.macadamia">Macadamia Nuts</a>
+        <a class="nav-sub" href="#products" data-i18n="nav.mixed">Mixed Nuts &amp; Snacks</a>
+      </div>
+    </div>
+
+    <a class="nav-link" href="#benefits" data-i18n="nav.why">Why Choose Us</a>
+    <a class="nav-link" href="#contact" data-i18n="nav.contact">Contact</a>
+  </nav>
+
+  <div class="site-shell">
+    <main>
+      <section class="hero section" id="home">
+        <div class="hero__content reveal">
+          <p class="eyebrow" data-i18n="hero.eyebrow">Brand introduction</p>
+          <h1 data-i18n="hero.title">Hạt Ngọc Xanh — Clean Foods</h1>
+          <p class="hero__tagline" data-i18n="hero.tagline">🌿 Hạt Ngọc Xanh — Specialty nuts & clean foods.</p>
+          <p class="hero__text" data-i18n="hero.text">Carefully selected products with transparent origins, no additives, and a focus on safety and stable quality. We commit to trustworthiness and refinement. Nationwide delivery available.</p>
+
+          <div class="hero__actions">
+              <a class="btn btn--primary" href="#products" data-i18n="hero.exploreBtn">
+                Explore Products
+              </a>
+
+              <a class="btn btn--ghost" href="#contact" data-i18n="hero.contactBtn">
+                Contact Us
+              </a>
+          </div>
+        </div>
+
+        <div class="hero__visual reveal">
+            <div class="hero__frame hero__frame--main">
+            <img src="" data-art="hero-main" alt="Hạt Ngọc Xanh Facebook cover" />
+          </div>
+
+          <div class="hero__frame hero__frame--secondary">
+            <img src="" data-art="hero-avatar" alt="Hạt Ngọc Xanh profile image" />
+            <div class="avatar-controls">
+              <input id="avatarUpload" type="file" accept="image/*" style="display:none" />
+              <button id="avatarChangeBtn" class="btn btn--small" type="button" data-i18n="hero.changeAvatar">Change avatar</button>
+            </div>
+          </div>
+
+
+        </div>
+      </section>
+
+      <section class="marquee section section--tight" aria-label="Highlights">
+        <div class="marquee__row">
+          <span data-i18n="marquee.1">Carefully selected</span>
+          <span data-i18n="marquee.2">Consistent quality</span>
+          <span data-i18n="marquee.3">Nationwide delivery</span>
+          <span data-i18n="marquee.4">Trustworthy · Refined · Safe</span>
+        </div>
+      </section>
+
+      <section class="section about" id="about">
+        <div class="section__heading reveal">
+          <p class="eyebrow" data-i18n="about.eyebrow">About us</p>
+          <h2 data-i18n="about.title">Brand story</h2>
+        </div>
+
+        <div class="about__layout">
+          <article class="story-card reveal">
+            <h3 data-i18n="about.storyTitle">Brief introduction</h3>
+            <p data-i18n="about.storyBody">Born in the heart of Binh Phuoc – Vietnam's renowned cashew-growing region – Hat Ngoc Xanh was founded with a simple yet meaningful mission: to bring clean, nutritious, and high-quality products from our homeland to every family.
+
+At Hat Ngoc Xanh, we believe that good nutrition is the foundation of a better life. That is why we carefully select our ingredients, prioritize food safety, and uphold strict quality standards throughout every stage of production. Every product we offer reflects our commitment to purity, honesty, and excellence.</p>
+          </article>
+
+          <div class="feature-stack">
+            <article class="feature-card reveal">
+              <span>01</span>
+              <h3 data-i18n="about.f1Title">Careful selection</h3>
+              <p data-i18n="about.f1Text">Products are carefully selected.</p>
+            </article>
+            <article class="feature-card reveal">
+              <span>02</span>
+              <h3 data-i18n="about.f2Title">Transparent origins</h3>
+              <p data-i18n="about.f2Text">Clear product origins.</p>
+            </article>
+            <article class="feature-card reveal">
+              <span>03</span>
+              <h3 data-i18n="about.f3Title">Consistent quality</h3>
+              <p data-i18n="about.f3Text">No additives, safety and stable quality.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section products" id="products">
+        <div class="section__heading reveal">
+          <p class="eyebrow" data-i18n="products.eyebrow">Product showcase</p>
+          <h2 data-i18n="products.title">Product lines</h2>
+        </div>
+
+        <div class="card-grid" id="productGrid"></div>
+      </section>
+
+      <section class="section benefits" id="benefits">
+        <div class="section__heading reveal">
+          <p class="eyebrow" data-i18n="benefits.eyebrow">Why choose us</p>
+          <h2 data-i18n="benefits.title">Strengths</h2>
+        </div>
+
+        <div class="benefit-grid" id="benefitGrid"></div>
+      </section>
+
+
+
+      <section class="section contact" id="contact">
+        <div class="section__heading reveal">
+          <p class="eyebrow" data-i18n="contact.eyebrow">Contact</p>
+          <h2 data-i18n="contact.title">Contact & Inquiries</h2>
+        </div>
+
+        <div class="contact__layout">
+          <div class="contact-card reveal">
+            <h3 data-i18n="contact.infoTitle">Contact information</h3>
+            <dl class="contact-list">
+              <div><dt data-i18n="contact.address">Address</dt><dd data-i18n="contact.addressValue">258 Phu Thanh, Phu Rieng, Dong Nai City, Vietnam</dd></div>
+              <div><dt data-i18n="contact.phone">Phone</dt><dd><a href="tel:+84962179358">096 217 93 58</a></dd></div>
+              <div><dt data-i18n="contact.email">Email</dt><dd><a href="mailto:cs.hatngocxanh@gmail.com">cs.hatngocxanh@gmail.com</a></dd></div>
+              <div><dt>Facebook</dt><dd><a href="https://www.facebook.com/thucphamsachhatngocxanh" target="_blank" rel="noreferrer" data-i18n="contact.fbLink">Hạt Ngọc Xanh - Clean Foods</a></dd></div>
+              <div><dt data-i18n="contact.hours">Opening hours</dt><dd data-i18n="contact.hoursValue">Always open</dd></div>
+              <div><dt data-i18n="contact.website">Website</dt><dd><a href="https://www.tiktok.com/@thucphamsach.hatngocxanh?_r=1&amp;_t=ZS-94PZQH1awgm" target="_blank" rel="noreferrer" data-i18n="contact.websiteValue">TikTok / profile</a></dd></div>
+            </dl>
+
+            <div class="contact-card__actions">
+              <a class="btn btn--primary" href="tel:+84962179358" data-i18n="contact.callBtn">Call Now</a>
+              <a class="btn btn--ghost" href="https://www.facebook.com/thucphamsachhatngocxanh" target="_blank" rel="noreferrer" data-i18n="contact.fbBtn">Open Facebook</a>
+            </div>
+          </div>
+
+          <div class="contact-showcase reveal">
+            <div class="showcase-grid">
+              <figure class="showcase-tile showcase-tile--large">
+                <img src="surce/bigAvatar.png" alt="Hạt Ngọc Xanh brand" loading="lazy" />
+              </figure>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__brand">
+        <span class="brand-mark__leaf">HNX</span>
+        <div>
+          <strong data-i18n="footer.brand">Hạt Ngọc Xanh - Clean Foods</strong>
+          <p data-i18n="footer.tagline">Specialty nuts & clean foods, carefully selected with transparent origins.</p>
+        </div>
+      </div>
+
+      <div class="footer__links">
+        <a href="#about" data-i18n="nav.about">About</a>
+        <a href="#products" data-i18n="nav.products">Products</a>
+        <a href="#contact" data-i18n="nav.contact">Contact</a>
+      </div>
+
+      <div class="footer__social">
+        <a href="https://www.facebook.com/thucphamsachhatngocxanh" target="_blank" rel="noreferrer">Facebook</a>
+        <a href="https://www.tiktok.com/@thucphamsach.hatngocxanh?_r=1&amp;_t=ZS-94PZQH1awgm" target="_blank" rel="noreferrer">TikTok</a>
+        <a href="mailto:cs.hatngocxanh@gmail.com">Email</a>
+      </div>
+    </footer>
+  </div>
+
+  <div class="lightbox" hidden aria-hidden="true">
+    <button class="lightbox__close" type="button" data-i18n-attr="aria-label:lightbox.close" aria-label="Close image">×</button>
+    <img class="lightbox__image" alt="" />
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

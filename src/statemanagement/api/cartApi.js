@@ -1,7 +1,0 @@
-import API from "./index";
-
-export const GetAllCartAPI = () => API.get("/user/cart");
-export const AddCartAPI = (id, body) => API.post(`/user/cart/${id}`, body);
-export const DeleteCartAPI = (id) => API.delete(`/user/cart/${id}`);
-export const CartQuantityAPI = (id, status) => API.post(`/user/cart/${id}/quantity`, { status });
-export const checkoutAPI = (payload) => API.post("/user/checkout", payload);
